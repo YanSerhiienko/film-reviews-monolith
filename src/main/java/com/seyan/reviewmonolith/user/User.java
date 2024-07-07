@@ -1,5 +1,6 @@
 package com.seyan.reviewmonolith.user;
 
+import com.seyan.reviewmonolith.user.dto.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +18,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "users")
+@DynamicUpdate
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +32,8 @@ public class User {
 
     @Column(nullable = false)
     private String password;
+
+    private Role role;
 
     List<Long> watchedFilms;
 

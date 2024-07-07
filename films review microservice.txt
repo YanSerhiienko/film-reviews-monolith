@@ -1,4 +1,4 @@
-social netfork for film enthusiasts 
+social network for film enthusiasts
 ####################################### Entities: 
 Links:
 api/activity
@@ -14,6 +14,8 @@ api/username
 api/username/films(watched)
 api/username/films/diary
 api/username/films/reviews
+api/username/watchlist
+api/username/films/reviews/title
 
 api/username/watchlist
 api/username/lists
