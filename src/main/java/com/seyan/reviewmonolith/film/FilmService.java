@@ -3,6 +3,7 @@ package com.seyan.reviewmonolith.film;
 import com.seyan.reviewmonolith.exception.film.FilmNotFoundException;
 import com.seyan.reviewmonolith.exception.film.IncorrectDateRangeException;
 import com.seyan.reviewmonolith.exception.user.UserNotFoundException;
+import com.seyan.reviewmonolith.film.dto.FilmCreationDTO;
 import com.seyan.reviewmonolith.film.dto.FilmMapper;
 import com.seyan.reviewmonolith.film.dto.FilmUpdateDTO;
 import com.seyan.reviewmonolith.user.User;
@@ -22,7 +23,8 @@ public class FilmService {
     private final FilmRepository filmRepository;
     private final FilmMapper filmMapper;
 
-    public Film createFilm(Film film) {
+    public Film createFilm(FilmCreationDTO dto) {
+        Film film = filmMapper.mapFilmCreationDTOToFilm(dto);
         return filmRepository.save(film);
     }
 
@@ -35,10 +37,14 @@ public class FilmService {
                 String.format("No film found with the provided ID: %s", id)));
     }
 
-    public Film getFilmByTitle(String title) {
+    /*public Film getFilmByTitle(String title) {
         return filmRepository.findByTitle(title).orElseThrow(() -> new FilmNotFoundException(
                 String.format("No film found with the provided title: %s", title)
         ));
+    }*/
+
+    public List<Film> getAllFilmsByTitle(String title) {
+        return filmRepository.findAllByTitle(title);
     }
 
     public List<Film> getAllFilmsByGenre(Genre genre) {

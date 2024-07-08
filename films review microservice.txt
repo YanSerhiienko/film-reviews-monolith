@@ -8,7 +8,18 @@ api/lists
 api/username/list/list-name
 
 api/films
-api/films/title
+api/film/title
+/films/genre/action/
+/films/popular/ - any decade
+/films/popular/upcoming/
+/films/popular/decade/2020s/
+/films/popular/decade/2020s/genre/action/
+/films/decade/2020s/genre/action/by/release/
+
+
+
+
+
 
 api/username
 api/username/films(watched)

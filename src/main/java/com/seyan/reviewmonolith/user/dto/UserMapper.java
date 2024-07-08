@@ -28,18 +28,18 @@ public class UserMapper {
         return destination;
     }
 
-    public UserProfileResponseDTO mapUserToUserProfileResponseDTO(User user) {
-        UserProfileResponseDTO response = new UserProfileResponseDTO();
+    public UserResponseDTO mapUserToUserResponseDTO(User user) {
+        UserResponseDTO response = new UserResponseDTO();
         BeanUtils.copyProperties(user, response);
         return response;
     }
 
     public PageableUserResponseDTO mapUsersPageToPageableUserResponseDTO(Page<User> usersPage) {
         List<User> listOfUsers = usersPage.getContent();
-        List<UserProfileResponseDTO> userProfileResponseDTO = mapUserToUserProfileResponseDTO(listOfUsers);
+        List<UserResponseDTO> userResponseDTO = mapUserToUserResponseDTO(listOfUsers);
 
         return PageableUserResponseDTO.builder()
-                .content(userProfileResponseDTO)
+                .content(userResponseDTO)
                 .pageNo(usersPage.getNumber())
                 .pageSize(usersPage.getSize())
                 .totalElements(usersPage.getTotalElements())
@@ -47,13 +47,13 @@ public class UserMapper {
                 .last(usersPage.isLast()).build();
     }
 
-    public List<UserProfileResponseDTO> mapUserToUserProfileResponseDTO(List<User> users) {
+    public List<UserResponseDTO> mapUserToUserResponseDTO(List<User> users) {
         if (users == null) {
             return null;
         }
 
-        List<UserProfileResponseDTO> list = users.stream()
-                .map(this::mapUserToUserProfileResponseDTO)
+        List<UserResponseDTO> list = users.stream()
+                .map(this::mapUserToUserResponseDTO)
                 .toList();
         return list;
     }

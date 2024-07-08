@@ -17,5 +17,5 @@ public class PageableUserResponseDTO {
     private long totalElements;
     private int totalPages;
     private boolean last;
-    private List<UserProfileResponseDTO> content;
+    private List<UserResponseDTO> content;
 }

@@ -49,6 +49,10 @@ public interface FilmRepository extends JpaRepository<Film, Long> {
 //    This Year
     //Optional<Film> findByTitle(String title);
 
+    Optional<Film> findByTitleAnd(String title);
+
+    List<Film> findAllByTitle(String title);
+
     List<Film> findByGenre(Genre genre);
 
     List<Film> findByReleaseDateBetween(LocalDate rangeFrom, LocalDate rangeTo);
@@ -62,4 +66,8 @@ public interface FilmRepository extends JpaRepository<Film, Long> {
     //findAllByOrderByIdAsc
 
     //findByBooOrderById
+
+    //findByUsernameInOrEmailIn
+
+    //findByTitleContainingIgnoreCase
 }

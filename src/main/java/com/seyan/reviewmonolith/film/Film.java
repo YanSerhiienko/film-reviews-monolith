@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 import java.util.List;
 
@@ -24,13 +26,13 @@ public class Film {
     private Long id;
     private String title;
     private String description;
-    private Date releaseDate;
+    private LocalDate releaseDate;
     private Double rating;
     private Profile director;
-    //private List<Profile> cast;
-    private List<Long> cast;
+    //private List<Profile> castProfiles;
+    private List<Long> castProfiles;
     private List<Genre> genres;
-    private Time runningTime;
+    private LocalTime runningTime;
     private Long watchedCount;
     private Long listCount;
     private Long likeCount;

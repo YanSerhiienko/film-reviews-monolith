@@ -1,9 +1,9 @@
 package com.seyan.reviewmonolith.exception;
 
-import com.example.clearsolutionstestassignment.responseWrapper.ValidationErrorWrapper;
 import com.seyan.reviewmonolith.exception.user.EmailAlreadyExistsException;
 import com.seyan.reviewmonolith.exception.film.IncorrectDateRangeException;
 import com.seyan.reviewmonolith.exception.user.UserNotFoundException;
+import com.seyan.reviewmonolith.responseWrapper.ValidationErrorWrapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
