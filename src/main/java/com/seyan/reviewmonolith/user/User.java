@@ -39,11 +39,11 @@ public class User {
 
     List<Long> watchlistFilms;
 
-    List<Long> likesFilms;
+    List<Long> likedFilms;
 
-    List<Long> likesReviews;
+    List<Long> likedReviews;
 
-    List<Long> likesLists;
+    List<Long> likedLists;
 
     List<Long> followingUsers;
 

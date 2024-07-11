@@ -1,7 +1,5 @@
 package com.seyan.reviewmonolith.review;
 
-import com.seyan.reviewmonolith.film.Genre;
-import com.seyan.reviewmonolith.film.Profile;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,7 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.sql.Time;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -27,13 +25,13 @@ public class Review {
     private Double rating;
     private Boolean isLikedFilm;
     private String content;
-    private Date creationDate;
+    private LocalDate creationDate;
     private Long filmId;
     private Long authorId;
     private Long reviewLikeCount;
     private Long commentCount;
     private List<Long> commentIds;
-    private Time runningTime;
+    //private Time runningTime;
     private Boolean containsSpoilers;
     private Boolean watchedThisFilmBefore;
 

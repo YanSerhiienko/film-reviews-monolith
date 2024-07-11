@@ -1,16 +1,12 @@
 package com.seyan.reviewmonolith.film.dto;
 
 import com.seyan.reviewmonolith.film.Genre;
-import com.seyan.reviewmonolith.film.Profile;
+import com.seyan.reviewmonolith.profile.Profile;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
 
-import java.sql.Time;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
-@Getter
 public record FilmUpdateDTO(
         @NotNull(message = "Film id is required")
         Long id,
@@ -18,10 +14,11 @@ public record FilmUpdateDTO(
         String description,
         LocalDate releaseDate,
         Profile director,
-        //List<Profile> castProfiles;
-        List<Long> castProfiles,
-        List<Genre> genres,
-        LocalTime runningTime
+        List<Profile> cast,
+        //List<Long> castProfiles,
+        //List<Genre> genres,
+        Genre genre,
+        Integer runningTimeMinutes
 ) {
 
 }

@@ -5,6 +5,8 @@ import com.seyan.reviewmonolith.film.Film;
 import com.seyan.reviewmonolith.film.FilmRepository;
 import com.seyan.reviewmonolith.user.User;
 import com.seyan.reviewmonolith.user.UserRepository;
+import com.seyan.reviewmonolith.user.UserService;
+import com.seyan.reviewmonolith.user.dto.PageableUserResponseDTO;
 import com.seyan.reviewmonolith.user.dto.UserCreationDTO;
 import com.seyan.reviewmonolith.user.dto.UserMapper;
 import com.seyan.reviewmonolith.user.dto.UserUpdateDTO;
@@ -15,7 +17,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Service
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final FilmRepository filmRepository;
     private final UserMapper userMapper;
@@ -49,14 +51,19 @@ public class UserServiceImpl {
         return userRepository.save(mapped);
     }
 
-    void deleteUser(Long id) {
+    public void deleteUser(Long id) {
         userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(
                 String.format("Cannot delete user:: No user found with the provided ID: %s", id)));
         userRepository.deleteById(id);
     }
 
+    @Override
+    public PageableUserResponseDTO getAllUsersPageable(int pageNo, int pageSize) {
+        return null;
+    }
+
     //TODO ignore/remove null from returned list
-    public List<Film> getWatchedFilms(String username) {
+    /*public List<Film> getWatchedFilms(String username) {
         User user = userRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(
                 String.format("No user found with the provided username: %s", username)
         ));
@@ -68,6 +75,14 @@ public class UserServiceImpl {
                 String.format("No user found with the provided username: %s", username)
         ));
         return filmRepository.findAllById(user.getWatchedFilms());
+    }*/
+
+    //todo custom repo select from user
+    public List<Long> getLikedFilms(Long id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(
+                String.format("No user found with the provided ID: %s", id)
+        ));
+        return user.getLikedFilms();
     }
 
 

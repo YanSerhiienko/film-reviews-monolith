@@ -1,5 +1,6 @@
 package com.seyan.reviewmonolith.user;
 
+import com.seyan.reviewmonolith.exception.user.UserNotFoundException;
 import com.seyan.reviewmonolith.user.dto.PageableUserResponseDTO;
 import com.seyan.reviewmonolith.user.dto.UserCreationDTO;
 import com.seyan.reviewmonolith.user.dto.UserUpdateDTO;
@@ -19,6 +20,8 @@ public interface UserService {
     User updateUser(UserUpdateDTO dto, Long id);
 
     void deleteUser(Long id);
+
+    public List<Long> getLikedFilms(Long id);
 
     PageableUserResponseDTO getAllUsersPageable(int pageNo, int pageSize);
 }

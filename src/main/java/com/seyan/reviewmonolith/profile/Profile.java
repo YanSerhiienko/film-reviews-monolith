@@ -1,5 +1,6 @@
-package com.seyan.reviewmonolith.film;
+package com.seyan.reviewmonolith.profile;
 
+import com.seyan.reviewmonolith.film.Film;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +21,14 @@ public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String name;
+
     private String biography;
-    private List<Film> starring;
-    private List<Film> directed;
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "cast")
+    private List<Film> starringFilms;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "director")
+    private List<Film> directedFilms;
 }

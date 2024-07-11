@@ -10,26 +10,39 @@ import java.util.Optional;
 
 @Repository
 public interface FilmRepository extends JpaRepository<Film, Long> {
+    //List<Film> findByGenre(Genre genre);
+
+    //todo fix
+    //List<Film> findByDecade(String decade);  THERE IS NO DECADE IN FILM ENTITY
+
+    //List<Film> findByDecadeAndGenre(String decade, Genre genre);
+
+    Optional<Film> findByFilmUrl(String filmUrl);
+
+
+
+
+    //////////////////////////////////////////////////
 
     //Film Name
     //List<Film> findAllByOrderByTitleAsc();
     //todo debug search with similar titles
-    List<Film> findByOrderByTitleAsc();
+    //List<Film> findByOrderByTitleAsc();
 
     //Release Date
-    List<Film> findByOrderByReleaseDateDesc(); //Newest First
-    List<Film> findByOrderByReleaseDateAsc(); //Earliest First
+    //List<Film> findByOrderByReleaseDateDesc(); //Newest First
+    //List<Film> findByOrderByReleaseDateAsc(); //Earliest First
 
     //Average Rating
-    List<Film> findByOrderByRatingDesc(); //Highest First
-    List<Film> findByOrderByRatingAsc(); //Lowest First
+    //List<Film> findByOrderByRatingDesc(); //Highest First
+    //List<Film> findByOrderByRatingAsc(); //Lowest First
 
     //Your Rating
     //findByInventoryIdIn(List<Long> inventoryIdList);
 
     //List<Film> findByOrderByIdAndRatingDescIn(List<Long> filmIds); //Highest First
-    List<Film> findByIdByOrderByRatingDescIn(List<Long> filmIds); //Highest First
-    List<Film> findByOrderByIdAndRatingAscIn(List<Long> filmIds); //Lowest First
+   // List<Film> findByIdByOrderByRatingDescIn(List<Long> filmIds); //Highest First
+    //List<Film> findByOrderByIdAndRatingAscIn(List<Long> filmIds); //Lowest First
 
 //    Your Interests
 //    Based on films you liked
@@ -49,19 +62,19 @@ public interface FilmRepository extends JpaRepository<Film, Long> {
 //    This Year
     //Optional<Film> findByTitle(String title);
 
-    Optional<Film> findByTitleAnd(String title);
+    Optional<Film> findByTitle(String title);
 
     List<Film> findAllByTitle(String title);
-
-    List<Film> findByGenre(Genre genre);
 
     List<Film> findByReleaseDateBetween(LocalDate rangeFrom, LocalDate rangeTo);
 
     Optional<Film> findByReleaseDate(LocalDate release);
 
-    List<Film> findByRatingDesc(Double rating);
+    List<Film> findByTitleContaining(String title);
 
-    List<Film> findByRatingAsc(Double rating);
+    //List<Film> findByRatingDesc(Double rating);
+
+    //List<Film> findByRatingAsc(Double rating);
 
     //findAllByOrderByIdAsc
 

@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.seyan</groupId>
-	<artifactId>review-monolith</artifactId>
+	<artifactId>profile-monolith</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>review-monolith</name>
+	<name>profile-monolith</name>
 	<description>Social network for film enthusiasts</description>
 	<url/>
 	<licenses>

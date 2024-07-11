@@ -1,5 +1,6 @@
 package com.seyan.reviewmonolith.film;
 
+import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +10,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public enum Genre {
+
+    //todo get rid of title
+
     ACTION ("Action"),
     ADVENTURE ("Adventure"),
     ANIMATION ("Animation"),

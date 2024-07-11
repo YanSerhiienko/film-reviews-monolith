@@ -17,7 +17,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/users")
 @RestController
 public class UserController {
     private final UserService userService;

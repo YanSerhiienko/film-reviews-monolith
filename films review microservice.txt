@@ -68,11 +68,11 @@ Review
 - id
 - text
 - rating
-- watched(date when leaving review), this adding review to your diary
+- watched(date when leaving profile), this adding profile to your diary
 - filmId
 - userId
-- likes (for this review)
-- comments (for this review)
+- likes (for this profile)
+- comments (for this profile)
 - your friends (number of watched)
 - contains Spoilers
 - watched this film before
