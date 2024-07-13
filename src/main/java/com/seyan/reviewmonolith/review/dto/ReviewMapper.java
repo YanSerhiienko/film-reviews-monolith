@@ -21,7 +21,7 @@ public class ReviewMapper {
                 .rating(dto.rating())
                 .isLikedFilm(dto.isLikedFilm())
                 .content(dto.content())
-                .creationDate(dto.creationDate())
+                //.creationDate(dto.creationDate())
                 .filmId(dto.filmId())
                 .authorId(dto.authorId())
                 .containsSpoilers(dto.containsSpoilers())
@@ -34,6 +34,7 @@ public class ReviewMapper {
         return destination;
     }
 
+    //todo remove all records
     public ReviewResponseDTO mapReviewToReviewResponseDTO(Review review) {
         //BeanUtils.copyProperties(profile, response);
         return new ReviewResponseDTO(

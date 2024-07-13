@@ -1,5 +1,7 @@
 package com.seyan.reviewmonolith.film;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.seyan.reviewmonolith.profile.Profile;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -9,15 +11,21 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
+//@NoArgsConstructor
 @Builder
 @Entity
 @Table(name = "films")
 @DynamicUpdate
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")
 public class Film {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,25 +39,21 @@ public class Film {
 
     //todo url
     @Column(unique = true)
-    private String filmUrl;
+    private String url;
 
     private Double rating;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "film_id")
+    @JoinColumn(name = "director_id")
     private Profile director;
 
-    //todo many to many
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "film_cast",
             joinColumns = @JoinColumn(name = "film_id"),
             inverseJoinColumns = @JoinColumn(name = "profile_id"))
-    private List<Profile> cast;
-    //private List<Long> castProfiles;
+    private Set<Profile> cast;
 
-    /*@Enumerated(EnumType.STRING)
-    private List<Genre> genres;*/
     @Enumerated(EnumType.STRING)
     private Genre genre;
 
@@ -60,4 +64,17 @@ public class Film {
     private Long listCount;
 
     private Long likeCount;
+
+    //private List<Long> castProfiles;
+
+    /*@Enumerated(EnumType.STRING)
+    private List<Genre> genres;*/
+
+    public Film() {
+        this.rating = 0.0;
+        this.cast = new HashSet<>();
+        this.watchedCount = 0L;
+        this.listCount = 0L;
+        this.likeCount = 0L;
+    }
 }

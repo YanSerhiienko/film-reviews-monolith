@@ -1,6 +1,8 @@
 package com.seyan.reviewmonolith.profile.dto;
 
 
+import com.seyan.reviewmonolith.film.Film;
+import com.seyan.reviewmonolith.film.dto.FilmInProfileResponseDTO;
 import com.seyan.reviewmonolith.profile.Profile;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
@@ -18,8 +20,9 @@ public class ProfileMapper {
         return Profile.builder()
                 .name(dto.name())
                 .biography(dto.biography())
-                .starringFilms(dto.starringFilms())
-                .directedFilms(dto.directedFilms())
+                // starring and directed wouldn't update from profile entity
+                //.starringFilms(dto.starringFilms())
+                //.directedFilms(dto.directedFilms())
                 .build();
     }
 
@@ -29,15 +32,31 @@ public class ProfileMapper {
     }
 
     public ProfileResponseDTO mapProfileToProfileResponseDTO(Profile profile) {
-        //BeanUtils.copyProperties(profile, response);
+        List<FilmInProfileResponseDTO> starring = mapFilmToFilmInProfileResponseDTO(profile.getStarringFilms());
+        List<FilmInProfileResponseDTO> directed = mapFilmToFilmInProfileResponseDTO(profile.getDirectedFilms());
         return new ProfileResponseDTO(
                 profile.getId(),
                 profile.getName(),
                 profile.getBiography(),
-                profile.getStarringFilms(),
-                profile.getDirectedFilms()
+                starring,
+                directed
         );
     }
+
+    private List<FilmInProfileResponseDTO> mapFilmToFilmInProfileResponseDTO(List<Film> films) {
+        if (films == null) {
+            return null;
+        }
+        return films.stream()
+                .map(this::mapFilmToFilmInProfileResponseDTO)
+                .toList();
+    }
+
+    private FilmInProfileResponseDTO mapFilmToFilmInProfileResponseDTO(Film film) {
+        return new FilmInProfileResponseDTO(film.getId(), film.getTitle(), film.getUrl());
+    }
+
+
 
     /*public PageableUserResponseDTO mapUsersPageToPageableUserResponseDTO(Page<User> usersPage) {
         List<User> listOfUsers = usersPage.getContent();

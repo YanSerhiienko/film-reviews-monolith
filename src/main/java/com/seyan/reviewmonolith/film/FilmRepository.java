@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,7 +16,7 @@ public interface FilmRepository extends JpaRepository<Film, Long> {
 
     //List<Film> findByDecadeAndGenre(String decade, Genre genre);
 
-    Optional<Film> findByFilmUrl(String filmUrl);
+    Optional<Film> findByUrl(String filmUrl);
 
 
 
@@ -71,6 +70,8 @@ public interface FilmRepository extends JpaRepository<Film, Long> {
     Optional<Film> findByReleaseDate(LocalDate release);
 
     List<Film> findByTitleContaining(String title);
+
+    int countByUrlContaining(String url);
 
     //List<Film> findByRatingDesc(Double rating);
 

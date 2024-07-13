@@ -1,5 +1,7 @@
 package com.seyan.reviewmonolith.profile;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.seyan.reviewmonolith.film.Film;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,6 +19,9 @@ import java.util.List;
 @Entity
 @Table(name = "profiles")
 @DynamicUpdate
+/*@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id")*/
 public class Profile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,9 +31,14 @@ public class Profile {
 
     private String biography;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "cast")
+    @ManyToMany(mappedBy = "cast", fetch = FetchType.LAZY)
     private List<Film> starringFilms;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "director")
+    @OneToMany(mappedBy = "director", fetch = FetchType.LAZY) //, cascade = CascadeType.ALL, orphanRemoval = true
     private List<Film> directedFilms;
+
+    /*@PreRemove
+    private void removeDirectedFilms() {
+        directedFilms.clear();
+    }*/
 }

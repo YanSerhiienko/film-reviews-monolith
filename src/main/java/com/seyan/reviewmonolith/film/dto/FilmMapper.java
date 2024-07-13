@@ -2,6 +2,8 @@ package com.seyan.reviewmonolith.film.dto;
 
 
 import com.seyan.reviewmonolith.film.Film;
+import com.seyan.reviewmonolith.profile.Profile;
+import com.seyan.reviewmonolith.profile.dto.ProfileInFilmResponseDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -9,21 +11,30 @@ import org.springframework.stereotype.Component;
 
 import java.beans.PropertyDescriptor;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Component
 public class FilmMapper {
     public Film mapFilmCreationDTOToFilm(FilmCreationDTO dto) {
-        return Film.builder()
+        Film film = new Film();
+        /*film.setTitle(dto.title());
+        film.setDescription(dto.description());
+        film.setReleaseDate(dto.releaseDate());
+        film.setGenre(dto.genre());
+        film.setRunningTimeMinutes(dto.runningTimeMinutes());*/
+        BeanUtils.copyProperties(dto, film, getNullFieldNames(dto));
+        /*return Film.builder()
                 .title(dto.title())
                 .description(dto.description())
                 .releaseDate(dto.releaseDate())
-                .director(dto.director())
-                .cast(dto.cast())
+                //.director(dto.director())
+                //.cast(dto.cast())
                 //.genres(dto.genres())
                 .genre(dto.genre())
                 .runningTimeMinutes(dto.runningTimeMinutes())
-                .build();
+                .build();*/
+        return film;
     }
 
     public Film mapFilmUpdateDTOToFilm(FilmUpdateDTO source, Film destination) {
@@ -31,11 +42,51 @@ public class FilmMapper {
         return destination;
     }
 
-    /*public UserProfileResponseDTO mapUserToUserProfileResponseDTO(User user) {
-        UserProfileResponseDTO response = new UserProfileResponseDTO();
-        BeanUtils.copyProperties(user, response);
-        return response;
-    }*/
+    private List<ProfileInFilmResponseDTO> mapProfileToProfileInFilmResponseDTO(Set<Profile> profiles) {
+        if (profiles == null) {
+            return null;
+        }
+        return profiles.stream()
+                .map(this::mapProfileToProfileInFilmResponseDTO)
+                .toList();
+    }
+
+    private ProfileInFilmResponseDTO mapProfileToProfileInFilmResponseDTO(Profile profile) {
+        if (profile == null) {
+            return null;
+        }
+        return new ProfileInFilmResponseDTO(profile.getId(), profile.getName());
+    }
+
+    public FilmResponseDTO mapFilmToFilmResponseDTO(Film film) {
+        List<ProfileInFilmResponseDTO> cast = mapProfileToProfileInFilmResponseDTO(film.getCast());
+        ProfileInFilmResponseDTO director = mapProfileToProfileInFilmResponseDTO(film.getDirector());
+        return new FilmResponseDTO(
+                film.getId(),
+                film.getTitle(),
+                film.getDescription(),
+                film.getReleaseDate(),
+                film.getUrl(),
+                film.getRating(),
+                director,
+                cast,
+                film.getGenre(),
+                film.getRunningTimeMinutes(),
+                film.getWatchedCount(),
+                film.getListCount(),
+                film.getLikeCount()
+        );
+    }
+
+    public List<FilmResponseDTO> mapFilmToFilmResponseDTO(List<Film> films) {
+        if (films == null) {
+            return null;
+        }
+
+        return films.stream()
+                .map(this::mapFilmToFilmResponseDTO)
+                .toList();
+    }
 
     /*public PageableUserResponseDTO mapUsersPageToPageableUserResponseDTO(Page<User> usersPage) {
         List<User> listOfUsers = usersPage.getContent();

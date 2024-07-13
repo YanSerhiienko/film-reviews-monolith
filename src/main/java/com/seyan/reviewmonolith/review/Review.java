@@ -31,7 +31,6 @@ public class Review {
     private Long reviewLikeCount;
     private Long commentCount;
     private List<Long> commentIds;
-    //private Time runningTime;
     private Boolean containsSpoilers;
     private Boolean watchedThisFilmBefore;
 

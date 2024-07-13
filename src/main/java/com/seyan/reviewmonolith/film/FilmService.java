@@ -2,44 +2,235 @@ package com.seyan.reviewmonolith.film;
 
 import com.seyan.reviewmonolith.exception.film.FilmNotFoundException;
 import com.seyan.reviewmonolith.exception.film.SortingParametersException;
+import com.seyan.reviewmonolith.exception.profile.ProfileNotFoundException;
 import com.seyan.reviewmonolith.film.dto.FilmCreationDTO;
 import com.seyan.reviewmonolith.film.dto.FilmMapper;
 import com.seyan.reviewmonolith.film.dto.FilmUpdateDTO;
+import com.seyan.reviewmonolith.profile.Profile;
+import com.seyan.reviewmonolith.profile.ProfileRepository;
 import com.seyan.reviewmonolith.review.ReviewService;
-import com.seyan.reviewmonolith.user.UserService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Service
 public class FilmService {
     private final FilmRepository filmRepository;
     private final FilmMapper filmMapper;
 
     private final ReviewService reviewService;
-    private final UserService userService;
+    //private final UserService userService;
 
+    private final ProfileRepository profileRepository;
+
+
+    public FilmService(FilmRepository filmRepository, FilmMapper filmMapper, @Lazy ReviewService reviewService, ProfileRepository profileRepository) {
+        this.filmRepository = filmRepository;
+        this.filmMapper = filmMapper;
+        this.reviewService = reviewService;
+        this.profileRepository = profileRepository;
+    }
+
+
+    //todo add check for existing director and cast members in db
+    //todo actually director is not updating
     public Film createFilm(FilmCreationDTO dto) {
         Film film = filmMapper.mapFilmCreationDTOToFilm(dto);
 
-        //todo add check for existing title
+        if (dto.directorId() != null) {
+            Profile director = profileRepository.findById(dto.directorId()).orElseThrow(() -> new ProfileNotFoundException(
+                    String.format("No director profile found with the provided ID: %s", dto.directorId())
+            ));
+            film.setDirector(director);
+        }
 
+        if (dto.castIdList() != null) {
+            List<Profile> foundCastList = profileRepository.findAllById(dto.castIdList());
+            if (dto.castIdList().size() != foundCastList.size()) {
+                List<Long> foundCastIdList = foundCastList.stream().map(Profile::getId).toList();
+                dto.castIdList().removeAll(foundCastIdList);
+                throw new ProfileNotFoundException(
+                        String.format("Some cast profiles were not found from the provided ID list: %s", dto.castIdList()));
+            }
+            film.getCast().addAll(foundCastList);
+            //foundCastList.forEach(film.getCast()::add);
+        }
+
+        Film withUrl = createUrl(film);
+        return filmRepository.save(withUrl);
+    }
+
+    //todo like count
+    public Integer updateLikeCount(boolean isLiked) {
+        //filmRepository.updateLike if true +1 / if false -1
+        return null;
+    }
+
+    private Film createUrl(Film film) {
+        //todo fix count when films were deleted
         String[] title = film.getTitle().split(" ");
         StringBuilder urlBuilder = new StringBuilder();
+
         for (String s : title) {
             urlBuilder.append(s).append("-");
         }
+
         String url = urlBuilder.append(film.getReleaseDate().getYear()).toString();
-        film.setFilmUrl(url);
+
+        int similarUrlCount = filmRepository.countByUrlContaining(url);
+
+        if (similarUrlCount > 0) {
+            urlBuilder.append("-").append(++similarUrlCount);
+            film.setUrl(urlBuilder.toString());
+            return film;
+        }
+
+        film.setUrl(url);
+        return film;
+    }
+
+    public Film getFilmById(Long id) {
+        return filmRepository.findById(id).orElseThrow(() -> new FilmNotFoundException(
+                String.format("No film found with the provided ID: %s", id)));
+    }
+
+    //TODO CHECK UPDATE PROFILE WITHOUT CASCADE
+//    public Film updateFilm(FilmUpdateDTO dto) {
+//        Film film = filmRepository.findById(dto.id()).orElseThrow(() -> new FilmNotFoundException(
+//                String.format("No film found with the provided ID: %s", dto.id())));
+//
+//        Film mapped = filmMapper.mapFilmUpdateDTOToFilm(dto, film);
+//
+//        if (dto.title() != null && !dto.title().equals(film.getTitle())) {
+//            Film mappedWithUrl = createUrl(mapped);
+//            return filmRepository.save(mappedWithUrl);
+//        }
+//
+//        return filmRepository.save(mapped);
+//    }
+
+    public Film updateFilm(FilmUpdateDTO dto, Long id) {
+        Film film = filmRepository.findById(id).orElseThrow(() -> new FilmNotFoundException(
+                String.format("No film found with the provided ID: %s", id)));
+
+        Film mapped = filmMapper.mapFilmUpdateDTOToFilm(dto, film);
+
+        if (dto.title() != null && !dto.title().equals(film.getTitle())) {
+            Film mappedWithUrl = createUrl(mapped);
+            return filmRepository.save(mappedWithUrl);
+        }
+
+        return filmRepository.save(mapped);
+    }
+
+    //todo addCastMember
+    public Film addCastMember(Long profileId, Long filmId) {
+        Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
+                String.format("No film found with the provided ID: %s", filmId)));
+
+        Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ProfileNotFoundException(
+                String.format("No profile found with the provided ID: %s", profileId)
+        ));
+
+        film.getCast().add(profile);
+        return filmRepository.save(film);
+    }
+
+    //todo some profiles were not found with provided id's
+    public Film addCastMember(List<Long> profileIdList, Long filmId) {
+        Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
+                String.format("No film found with the provided ID: %s", filmId)));
+
+        List<Profile> profileList = profileRepository.findAllById(profileIdList);
+
+        if (profileIdList.size() != profileList.size()) {
+            List<Long> foundProfileIdList = profileList.stream().map(Profile::getId).toList();
+            profileIdList.removeAll(foundProfileIdList);
+            throw new ProfileNotFoundException(
+                    String.format("Some profiles were not found from the provided ID list: %s", profileIdList));
+        }
+
+        film.getCast().addAll(profileList);
+        return filmRepository.save(film);
+    }
+
+    //todo removeCastMember
+    public Film removeCastMember(Long profileId, Long filmId) {
+        Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
+                String.format("No film found with the provided ID: %s", filmId)));
+
+        Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ProfileNotFoundException(
+                String.format("No profile found with the provided ID: %s", profileId)
+        ));
+
+        film.getCast().remove(profile);
+        return filmRepository.save(film);
+    }
+
+    public Film removeCastMember(List<Long> profileIdList, Long filmId) {
+        Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
+                String.format("No film found with the provided ID: %s", filmId)));
+
+        List<Profile> profileList = profileRepository.findAllById(profileIdList);
+
+        profileList.forEach(film.getCast()::remove);
+        return filmRepository.save(film);
+    }
+
+    public Film updateDirector(Long profileId, Long filmId) {
+        Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
+                String.format("No film found with the provided ID: %s", filmId)));
+
+        Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ProfileNotFoundException(
+                String.format("No profile found with the provided ID: %s", profileId)
+        ));
+
+        film.setDirector(profile);
 
         return filmRepository.save(film);
+    }
+
+    public void updateWatchedCount(int i) {
+        //todo repo method
+    }
+
+    public void deleteFilm(Long id) {
+        Film film = filmRepository.findById(id).orElseThrow(() -> new FilmNotFoundException(
+                String.format("No film found with the provided ID: %s", id)));
+        filmRepository.deleteById(id);
+    }
+
+    /*public Film getFilmByTitle(String title) {
+        return filmRepository.findByTitle(title).orElseThrow(() -> new FilmNotFoundException(
+                String.format("No film found with the provided title: %s", title)
+        ));
+    }*/
+
+    public List<Film> getAllFilmsByTitle(String title) {
+        //String[] splitTitle = title.split("+");
+        String[] split = title.split("-");
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < split.length - 1; i++) {
+            builder.append(split[i]).append(" ");
+        }
+        String parsedTitle = builder.append(split[split.length - 1]).toString();
+        System.out.println("_____________________________________________parsedTitle = " + parsedTitle);
+        return filmRepository.findByTitleContaining(parsedTitle);
+    }
+
+    public Film getFilmByUrl(String filmUrl) {
+        //todo change throw msg???
+        return filmRepository.findByUrl(filmUrl).orElseThrow(() -> new FilmNotFoundException(
+                String.format("No film found with the provided url: %s", filmUrl)
+        ));
     }
 
     public List<Film> getAllFilmsWithParams(Map<String, String> params, Long userId) {
@@ -80,43 +271,6 @@ public class FilmService {
         }
 
         return stream.collect(Collectors.toList());
-    }
-
-    public Film getFilmById(Long id) {
-        return filmRepository.findById(id).orElseThrow(() -> new FilmNotFoundException(
-                String.format("No film found with the provided ID: %s", id)));
-    }
-
-
-    public Film updateFilm(FilmUpdateDTO dto) {
-        Film film = filmRepository.findById(dto.id()).orElseThrow(() -> new FilmNotFoundException(
-                String.format("No film found with the provided ID: %s", dto.id())));
-        Film mapped = filmMapper.mapFilmUpdateDTOToFilm(dto, film);
-        return filmRepository.save(film);
-    }
-
-    public void deleteFilm(Long id) {
-        Film film = filmRepository.findById(id).orElseThrow(() -> new FilmNotFoundException(
-                String.format("No film found with the provided ID: %s", id)));
-        filmRepository.deleteById(id);
-    }
-
-    /*public Film getFilmByTitle(String title) {
-        return filmRepository.findByTitle(title).orElseThrow(() -> new FilmNotFoundException(
-                String.format("No film found with the provided title: %s", title)
-        ));
-    }*/
-
-    public List<Film> getAllFilmsByTitle(String title) {
-        //String[] splitTitle = title.split("+");
-        return filmRepository.findByTitleContaining(title);
-    }
-
-    public Film getFilmByUrl(String filmUrl) {
-        //todo change throw msg???
-        return filmRepository.findByFilmUrl(filmUrl).orElseThrow(() -> new FilmNotFoundException(
-                String.format("No film found with the provided url: %s", filmUrl)
-        ));
     }
 
     private Stream<Film> filterFilmsByName(Stream<Film> stream, String name) {

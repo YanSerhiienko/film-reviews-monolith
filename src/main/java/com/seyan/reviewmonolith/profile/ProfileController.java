@@ -1,5 +1,7 @@
 package com.seyan.reviewmonolith.profile;
 
+import com.seyan.reviewmonolith.film.Film;
+import com.seyan.reviewmonolith.film.dto.FilmResponseDTO;
 import com.seyan.reviewmonolith.profile.dto.ProfileCreationDTO;
 import com.seyan.reviewmonolith.profile.dto.ProfileMapper;
 import com.seyan.reviewmonolith.profile.dto.ProfileResponseDTO;
@@ -34,8 +36,9 @@ public class ProfileController {
     }
 
     @PatchMapping("/{id}/update")
-    public ResponseEntity<CustomResponseWrapper<ProfileResponseDTO>> updateProfile(@RequestBody @Valid ProfileUpdateDTO dto) {
-        Profile profile = profileService.updateProfile(dto);
+    public ResponseEntity<CustomResponseWrapper<ProfileResponseDTO>> updateProfile(
+            @PathVariable("id") Long id, @RequestBody @Valid ProfileUpdateDTO dto) {
+        Profile profile = profileService.updateProfile(dto, id);
         ProfileResponseDTO response = profileMapper.mapProfileToProfileResponseDTO(profile);
         CustomResponseWrapper<ProfileResponseDTO> wrapper = CustomResponseWrapper.<ProfileResponseDTO>builder()
                 .status(HttpStatus.OK.value())
@@ -75,6 +78,126 @@ public class ProfileController {
         CustomResponseWrapper<List<ProfileResponseDTO>> wrapper = CustomResponseWrapper.<List<ProfileResponseDTO>>builder()
                 .status(HttpStatus.OK.value())
                 .message("List of all profiles")
+                .data(response)
+                .build();
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}/update/add-starring")
+    public ResponseEntity<CustomResponseWrapper<ProfileResponseDTO>> addStarringFilm(
+            @PathVariable(value = "id") Long profileId, @RequestParam(required = false) Long filmId,
+            @RequestBody(required = false) List<Long> filmIdList) {
+
+        Profile profile = new Profile();
+
+        if ((filmId == null & filmIdList == null)
+                || (filmId != null & filmIdList != null)) {
+            CustomResponseWrapper<ProfileResponseDTO> wrapper = CustomResponseWrapper.<ProfileResponseDTO>builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .message("Request should contain film id OR film id list")
+                    .data(null)
+                    .build();
+            return new ResponseEntity<>(wrapper, HttpStatus.BAD_REQUEST);
+        } else if (filmId != null) {
+            profile = profileService.addStarringFilm(profileId, filmId);
+        } else {
+            profile = profileService.addStarringFilm(profileId, filmIdList);
+        }
+
+        ProfileResponseDTO response = profileMapper.mapProfileToProfileResponseDTO(profile);
+        CustomResponseWrapper<ProfileResponseDTO> wrapper = CustomResponseWrapper.<ProfileResponseDTO>builder()
+                .status(HttpStatus.OK.value())
+                .message("Profile with updated starring films")
+                .data(response)
+                .build();
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}/update/remove-starring")
+    public ResponseEntity<CustomResponseWrapper<ProfileResponseDTO>> removeStarringFilm(
+            @PathVariable(value = "id") Long profileId, @RequestParam(required = false) Long filmId,
+            @RequestBody(required = false) List<Long> filmIdList) {
+
+        Profile profile = new Profile();
+
+        if ((filmId == null & filmIdList == null)
+                || (filmId != null & filmIdList != null)) {
+            CustomResponseWrapper<ProfileResponseDTO> wrapper = CustomResponseWrapper.<ProfileResponseDTO>builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .message("Request should contain film id OR film id list")
+                    .data(null)
+                    .build();
+            return new ResponseEntity<>(wrapper, HttpStatus.BAD_REQUEST);
+        } else if (filmId != null) {
+            profile = profileService.removeStarringFilm(profileId, filmId);
+        } else {
+            profile = profileService.removeStarringFilm(profileId, filmIdList);
+        }
+
+        ProfileResponseDTO response = profileMapper.mapProfileToProfileResponseDTO(profile);
+        CustomResponseWrapper<ProfileResponseDTO> wrapper = CustomResponseWrapper.<ProfileResponseDTO>builder()
+                .status(HttpStatus.OK.value())
+                .message("Profile with updated starring films")
+                .data(response)
+                .build();
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}/update/add-directed")
+    public ResponseEntity<CustomResponseWrapper<ProfileResponseDTO>> addDirectedFilm(
+            @PathVariable(value = "id") Long profileId, @RequestParam(required = false) Long filmId,
+            @RequestBody(required = false) List<Long> filmIdList) {
+
+        Profile profile = new Profile();
+
+        if ((filmId == null & filmIdList == null)
+                || (filmId != null & filmIdList != null)) {
+            CustomResponseWrapper<ProfileResponseDTO> wrapper = CustomResponseWrapper.<ProfileResponseDTO>builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .message("Request should contain film id OR film id list")
+                    .data(null)
+                    .build();
+            return new ResponseEntity<>(wrapper, HttpStatus.BAD_REQUEST);
+        } else if (filmId != null) {
+            profile = profileService.addDirectedFilm(profileId, filmId);
+        } else {
+            profile = profileService.addDirectedFilm(profileId, filmIdList);
+        }
+
+        ProfileResponseDTO response = profileMapper.mapProfileToProfileResponseDTO(profile);
+        CustomResponseWrapper<ProfileResponseDTO> wrapper = CustomResponseWrapper.<ProfileResponseDTO>builder()
+                .status(HttpStatus.OK.value())
+                .message("Profile with updated directed films")
+                .data(response)
+                .build();
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}/update/remove-directed")
+    public ResponseEntity<CustomResponseWrapper<ProfileResponseDTO>> removeDirectedFilm(
+            @PathVariable(value = "id") Long profileId, @RequestParam(required = false) Long filmId,
+            @RequestBody(required = false) List<Long> filmIdList) {
+
+        Profile profile = new Profile();
+
+        if ((filmId == null & filmIdList == null)
+                || (filmId != null & filmIdList != null)) {
+            CustomResponseWrapper<ProfileResponseDTO> wrapper = CustomResponseWrapper.<ProfileResponseDTO>builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .message("Request should contain film id OR film id list")
+                    .data(null)
+                    .build();
+            return new ResponseEntity<>(wrapper, HttpStatus.BAD_REQUEST);
+        } else if (filmId != null) {
+            profile = profileService.removeDirectedFilm(profileId, filmId);
+        } else {
+            profile = profileService.removeDirectedFilm(profileId, filmIdList);
+        }
+
+        ProfileResponseDTO response = profileMapper.mapProfileToProfileResponseDTO(profile);
+        CustomResponseWrapper<ProfileResponseDTO> wrapper = CustomResponseWrapper.<ProfileResponseDTO>builder()
+                .status(HttpStatus.OK.value())
+                .message("Profile with updated directed films")
                 .data(response)
                 .build();
         return new ResponseEntity<>(wrapper, HttpStatus.OK);

@@ -1,12 +1,15 @@
 package com.seyan.reviewmonolith.review;
 
 import com.seyan.reviewmonolith.exception.review.ReviewNotFoundException;
+import com.seyan.reviewmonolith.film.FilmService;
 import com.seyan.reviewmonolith.review.dto.ReviewCreationDTO;
 import com.seyan.reviewmonolith.review.dto.ReviewMapper;
 import com.seyan.reviewmonolith.review.dto.ReviewUpdateDTO;
+import com.seyan.reviewmonolith.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -14,9 +17,22 @@ import java.util.List;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final ReviewMapper reviewMapper;
+    private final FilmService filmService;
+    private final UserService userService;
 
     public Review createReview(ReviewCreationDTO dto) {
         Review review = reviewMapper.mapReviewCreationDTOToReview(dto);
+        //todo fix date format
+        review.setCreationDate(LocalDate.now());
+
+        if (review.getIsLikedFilm()) {
+            //todo change boolean to int (???)
+            filmService.updateLikeCount(true);
+            userService.addFilmToLiked(review.getAuthorId(), review.getFilmId());
+        }
+
+        filmService.updateWatchedCount(1);
+        userService.addFilmToWatched(review.getAuthorId(), review.getFilmId());
         return reviewRepository.save(review);
     }
 
@@ -34,13 +50,29 @@ public class ReviewService {
         Review review = reviewRepository.findById(dto.id()).orElseThrow(() -> new ReviewNotFoundException(
                 String.format("No review found with the provided ID: %s", dto.id())
         ));
+
+        if (dto.isLikedFilm() != review.getIsLikedFilm()) {
+            filmService.updateLikeCount(dto.isLikedFilm());
+            if (dto.isLikedFilm()) {
+                userService.addFilmToLiked(review.getAuthorId(), review.getFilmId());
+            } else {
+                userService.removeFilmFromLiked(review.getAuthorId(), review.getFilmId());
+            }
+        }
+
         Review mapped = reviewMapper.mapReviewUpdateDTOToReview(dto, review);
         return reviewRepository.save(mapped);
     }
 
     public void deleteReview(Long id) {
-        reviewRepository.findById(id).orElseThrow(() -> new ReviewNotFoundException(
+        Review review = reviewRepository.findById(id).orElseThrow(() -> new ReviewNotFoundException(
                 String.format("Cannot delete review:: No review found with the provided ID: %s", id)));
+
+        if (review.getIsLikedFilm()) {
+            filmService.updateLikeCount(false);
+            userService.removeFilmFromLiked(review.getAuthorId(), review.getFilmId());
+        }
+
         reviewRepository.deleteById(id);
     }
 

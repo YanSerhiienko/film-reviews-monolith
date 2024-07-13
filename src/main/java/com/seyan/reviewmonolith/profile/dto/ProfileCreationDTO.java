@@ -6,13 +6,13 @@ import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 
-public record ProfileCreationDTO (
+public record ProfileCreationDTO(
         @NotNull
         String name,
         @NotNull
         String biography,
-        List<Film> starringFilms,
-        List<Film> directedFilms
+        List<Long> starringFilmsId,
+        List<Long> directedFilmsId
 ) {
 
 }

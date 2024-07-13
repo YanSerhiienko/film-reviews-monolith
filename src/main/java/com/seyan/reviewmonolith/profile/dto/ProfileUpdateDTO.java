@@ -7,11 +7,11 @@ import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 public record ProfileUpdateDTO(
-        @NotNull
-        Long id,
+        //@NotNull
+        //Long id,
         String name,
         String biography,
-        List<Film> starringFilms,
-        List<Film> directedFilms
+        List<Long> starringFilmsId,
+        List<Long> directedFilmsId
 ) {
 }
