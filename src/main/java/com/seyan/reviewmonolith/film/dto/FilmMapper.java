@@ -55,7 +55,7 @@ public class FilmMapper {
         if (profile == null) {
             return null;
         }
-        return new ProfileInFilmResponseDTO(profile.getId(), profile.getName());
+        return new ProfileInFilmResponseDTO(profile.getId(), profile.getName(), profile.getUrl());
     }
 
     public FilmResponseDTO mapFilmToFilmResponseDTO(Film film) {

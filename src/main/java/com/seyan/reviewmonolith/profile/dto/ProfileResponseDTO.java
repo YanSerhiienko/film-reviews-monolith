@@ -2,6 +2,7 @@ package com.seyan.reviewmonolith.profile.dto;
 
 import com.seyan.reviewmonolith.film.Film;
 import com.seyan.reviewmonolith.film.dto.FilmInProfileResponseDTO;
+import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
@@ -15,7 +16,8 @@ public record ProfileResponseDTO(
         String name,
         String biography,
         List<FilmInProfileResponseDTO> starringFilms,
-        List<FilmInProfileResponseDTO> directedFilms
+        List<FilmInProfileResponseDTO> directedFilms,
+        String url
 ) {
 
 }

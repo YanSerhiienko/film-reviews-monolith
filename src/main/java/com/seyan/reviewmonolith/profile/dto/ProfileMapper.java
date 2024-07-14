@@ -39,7 +39,8 @@ public class ProfileMapper {
                 profile.getName(),
                 profile.getBiography(),
                 starring,
-                directed
+                directed,
+                profile.getUrl()
         );
     }
 
@@ -53,6 +54,9 @@ public class ProfileMapper {
     }
 
     private FilmInProfileResponseDTO mapFilmToFilmInProfileResponseDTO(Film film) {
+        if (film == null) {
+            return null;
+        }
         return new FilmInProfileResponseDTO(film.getId(), film.getTitle(), film.getUrl());
     }
 

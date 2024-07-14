@@ -23,9 +23,51 @@ public class ProfileService {
     private final FilmRepository filmRepository;
 
     //todo create with starring and directed films
+    @Transactional
     public Profile createProfile(ProfileCreationDTO dto) {
         Profile profile = profileMapper.mapPofileCreationDTOToProfile(dto);
-        return profileRepository.save(profile);
+
+        profileRepository.save(profile);
+
+        if (dto.starringFilmsId() != null) {
+            addStarringFilm(profile.getId(), dto.starringFilmsId());
+        }
+
+        if (dto.directedFilmsId() != null) {
+            addDirectedFilm(profile.getId(), dto.directedFilmsId());
+        }
+
+        return profile;
+    }
+
+    private Profile createUrl(Profile profile) {
+        //todo fix count when profiles were deleted
+        String[] name = profile.getName().split(" ");
+        StringBuilder urlBuilder = new StringBuilder();
+
+        for (String s : name) {
+            urlBuilder.append(s).append("-");
+        }
+
+        String url = urlBuilder.toString();
+
+        int similarUrlCount = profileRepository.countByUrlContaining(url);
+
+        if (similarUrlCount > 0) {
+            urlBuilder.append("-").append(++similarUrlCount);
+            profile.setUrl(urlBuilder.toString());
+            return profile;
+        }
+
+        profile.setUrl(url);
+        return profile;
+    }
+
+    public Profile getProfileByUrl(String profileUrl) {
+        //todo change throw msg???
+        return profileRepository.findByUrl(profileUrl).orElseThrow(() -> new ProfileNotFoundException(
+                String.format("No profile found with the provided url: %s", profileUrl)
+        ));
     }
 
     public Profile getProfileById(Long id) {
@@ -70,7 +112,7 @@ public class ProfileService {
 
     }*/
 
-    public Profile addStarringFilm(Long profileId, Long filmId) {
+    /*public Profile addStarringFilm(Long profileId, Long filmId) {
         Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ProfileNotFoundException(
                 String.format("No profile found with the provided ID: %s", profileId)
         ));
@@ -81,7 +123,7 @@ public class ProfileService {
         film.getCast().add(profile);
         filmRepository.save(film);
         return profile;
-    }
+    }*/
 
     public Profile addStarringFilm(Long profileId, List<Long> filmIdList) {
         Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ProfileNotFoundException(
@@ -94,7 +136,7 @@ public class ProfileService {
             List<Long> foundFilmIdList = filmList.stream().map(Film::getId).toList();
             filmIdList.removeAll(foundFilmIdList);
             throw new FilmNotFoundException(
-                    String.format("Some films were not found from the provided ID list: %s", filmIdList));
+                    String.format("Some films from the provided ID list were not found : %s", filmIdList));
         }
 
         filmList.forEach(film -> film.getCast().add(profile));
@@ -102,7 +144,7 @@ public class ProfileService {
         return profile;
     }
 
-    public Profile removeStarringFilm(Long profileId, Long filmId) {
+    /*public Profile removeStarringFilm(Long profileId, Long filmId) {
         Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ProfileNotFoundException(
                 String.format("No profile found with the provided ID: %s", profileId)
         ));
@@ -113,7 +155,7 @@ public class ProfileService {
         film.getCast().remove(profile);
         filmRepository.save(film);
         return profile;
-    }
+    }*/
 
     public Profile removeStarringFilm(Long profileId, List<Long> filmIdList) {
         Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ProfileNotFoundException(
@@ -127,7 +169,7 @@ public class ProfileService {
         return profile;
     }
 
-    public Profile addDirectedFilm(Long profileId, Long filmId) {
+    /*public Profile addDirectedFilm(Long profileId, Long filmId) {
         Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ProfileNotFoundException(
                 String.format("No profile found with the provided ID: %s", profileId)
         ));
@@ -138,7 +180,7 @@ public class ProfileService {
         film.setDirector(profile);
         filmRepository.save(film);
         return profile;
-    }
+    }*/
 
     public Profile addDirectedFilm(Long profileId, List<Long> filmIdList) {
         Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ProfileNotFoundException(
@@ -147,6 +189,13 @@ public class ProfileService {
 
         List<Film> filmList = filmRepository.findAllById(filmIdList);
 
+        if (filmIdList.size() != filmList.size()) {
+            List<Long> foundFilmIdList = filmList.stream().map(Film::getId).toList();
+            filmIdList.removeAll(foundFilmIdList);
+            throw new FilmNotFoundException(
+                    String.format("Some films from the provided ID list were not found : %s", filmIdList));
+        }
+
         filmList.forEach(film -> film.setDirector(profile));
         filmRepository.saveAll(filmList);
         return profile;
@@ -154,7 +203,7 @@ public class ProfileService {
 
     //todo is it a good practice to set null?
     //todo test reversed OneToMany relation
-    public Profile removeDirectedFilm(Long profileId, Long filmId) {
+    /*public Profile removeDirectedFilm(Long profileId, Long filmId) {
         Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ProfileNotFoundException(
                 String.format("No profile found with the provided ID: %s", profileId)
         ));
@@ -166,7 +215,7 @@ public class ProfileService {
         film.setDirector(null);
         filmRepository.save(film);
         return profile;
-    }
+    }*/
 
     public Profile removeDirectedFilm(Long profileId, List<Long> filmIdList) {
         Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ProfileNotFoundException(

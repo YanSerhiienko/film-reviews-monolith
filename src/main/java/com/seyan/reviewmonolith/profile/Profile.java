@@ -37,6 +37,9 @@ public class Profile {
     @OneToMany(mappedBy = "director", fetch = FetchType.LAZY) //, cascade = CascadeType.ALL, orphanRemoval = true
     private List<Film> directedFilms;
 
+    @Column(unique = true)
+    private String url;
+
     /*@PreRemove
     private void removeDirectedFilms() {
         directedFilms.clear();

@@ -33,18 +33,6 @@ public class FilmController {
         return new ResponseEntity<>(wrapper, HttpStatus.CREATED);
     }
 
-    /*@PatchMapping("/update")
-    public ResponseEntity<CustomResponseWrapper<FilmResponseDTO>> updateFilm(@RequestBody @Valid FilmUpdateDTO dto) {
-        Film film = filmService.updateFilm(dto);
-        FilmResponseDTO response = filmMapper.mapFilmToFilmResponseDTO(film);
-        CustomResponseWrapper<FilmResponseDTO> wrapper = CustomResponseWrapper.<FilmResponseDTO>builder()
-                .status(HttpStatus.OK.value())
-                .message("Film has been updated")
-                .data(response)
-                .build();
-        return new ResponseEntity<>(wrapper, HttpStatus.OK);
-    }*/
-
     @PatchMapping("/{id}/update")
     public ResponseEntity<CustomResponseWrapper<FilmResponseDTO>> updateFilm(@PathVariable("id") Long id, @RequestBody @Valid FilmUpdateDTO dto) {
         Film film = filmService.updateFilm(dto, id);
@@ -68,9 +56,9 @@ public class FilmController {
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
     }
 
-    @GetMapping("/{filmUrl}")
-    public ResponseEntity<CustomResponseWrapper<FilmResponseDTO>> filmDetailsByUrl(@PathVariable(value = "filmUrl") String filmUrl) {
-        Film film = filmService.getFilmByUrl(filmUrl);
+    @GetMapping("/{id}/details")
+    public ResponseEntity<CustomResponseWrapper<FilmResponseDTO>> filmDetailsById(@PathVariable(value = "id") Long id) {
+        Film film = filmService.getFilmById(id);
         FilmResponseDTO response = filmMapper.mapFilmToFilmResponseDTO(film);
         CustomResponseWrapper<FilmResponseDTO> wrapper = CustomResponseWrapper.<FilmResponseDTO>builder()
                 .status(HttpStatus.OK.value())
@@ -80,9 +68,9 @@ public class FilmController {
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}/details")
-    public ResponseEntity<CustomResponseWrapper<FilmResponseDTO>> filmDetailsById(@PathVariable(value = "id") Long id) {
-        Film film = filmService.getFilmById(id);
+    @GetMapping("/{filmUrl}")
+    public ResponseEntity<CustomResponseWrapper<FilmResponseDTO>> filmDetailsByUrl(@PathVariable(value = "filmUrl") String filmUrl) {
+        Film film = filmService.getFilmByUrl(filmUrl);
         FilmResponseDTO response = filmMapper.mapFilmToFilmResponseDTO(film);
         CustomResponseWrapper<FilmResponseDTO> wrapper = CustomResponseWrapper.<FilmResponseDTO>builder()
                 .status(HttpStatus.OK.value())
@@ -121,6 +109,80 @@ public class FilmController {
 
     @PatchMapping("{id}/update/add-cast")
     public ResponseEntity<CustomResponseWrapper<FilmResponseDTO>> addFilmCastMember(
+            @PathVariable(value = "id") Long filmId, @RequestBody List<Long> profileIdList) {
+
+        Film film = filmService.addCastMember(profileIdList, filmId);
+        FilmResponseDTO response = filmMapper.mapFilmToFilmResponseDTO(film);
+
+        CustomResponseWrapper<FilmResponseDTO> wrapper = CustomResponseWrapper.<FilmResponseDTO>builder()
+                .status(HttpStatus.OK.value())
+                .message("Film with updated cast")
+                .data(response)
+                .build();
+
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }
+
+    @PatchMapping("{id}/update/remove-cast")
+    public ResponseEntity<CustomResponseWrapper<FilmResponseDTO>> removeFilmCastMember
+            (@PathVariable(value = "id") Long filmId, @RequestBody List<Long> profileIdList) {
+
+        Film film = filmService.removeCastMember(profileIdList, filmId);
+        FilmResponseDTO response = filmMapper.mapFilmToFilmResponseDTO(film);
+
+        CustomResponseWrapper<FilmResponseDTO> wrapper = CustomResponseWrapper.<FilmResponseDTO>builder()
+                .status(HttpStatus.OK.value())
+                .message("Film with updated cast")
+                .data(response)
+                .build();
+
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }
+
+    @PatchMapping("{id}/update/director")
+    public ResponseEntity<CustomResponseWrapper<FilmResponseDTO>> updateFilmDirector
+            (@PathVariable(value = "id") Long filmId, @RequestParam(required = false) Long directorId) {
+
+        Film film = filmService.updateDirector(directorId, filmId);
+        FilmResponseDTO response = filmMapper.mapFilmToFilmResponseDTO(film);
+
+        CustomResponseWrapper<FilmResponseDTO> wrapper = CustomResponseWrapper.<FilmResponseDTO>builder()
+                .status(HttpStatus.OK.value())
+                .message("Film with updated cast")
+                .data(response)
+                .build();
+
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }
+
+    /*@PatchMapping("/update")
+    public ResponseEntity<CustomResponseWrapper<FilmResponseDTO>> updateFilm(@RequestBody @Valid FilmUpdateDTO dto) {
+        Film film = filmService.updateFilm(dto);
+        FilmResponseDTO response = filmMapper.mapFilmToFilmResponseDTO(film);
+        CustomResponseWrapper<FilmResponseDTO> wrapper = CustomResponseWrapper.<FilmResponseDTO>builder()
+                .status(HttpStatus.OK.value())
+                .message("Film has been updated")
+                .data(response)
+                .build();
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }*/
+
+    /*@GetMapping("/pageable")
+    public ResponseEntity<CustomResponseWrapper<PageableUserResponseDTO>> getPageable(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize) {
+        PageableUserResponseDTO allUsersPageable = userService.getAllUsersPageable(pageNo, pageSize);
+
+        CustomResponseWrapper<PageableUserResponseDTO> wrapper = CustomResponseWrapper.<PageableUserResponseDTO>builder()
+                .status(HttpStatus.OK.value())
+                .message("List of all users")
+                .data(allUsersPageable)
+                .build();
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }*/
+
+    /*@PatchMapping("{id}/update/add-cast")
+    public ResponseEntity<CustomResponseWrapper<FilmResponseDTO>> addFilmCastMember(
             @PathVariable(value = "id") Long filmId, @RequestParam(required = false) Long profileId,
             @RequestBody(required = false) List<Long> profileIdList) {
 
@@ -147,9 +209,9 @@ public class FilmController {
                 .data(response)
                 .build();
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
-    }
+    }*/
 
-    @PatchMapping("{id}/update/remove-cast")
+    /*@PatchMapping("{id}/update/remove-cast")
     public ResponseEntity<CustomResponseWrapper<FilmResponseDTO>> removeFilmCastMember
             (@PathVariable(value = "id") Long filmId, @RequestParam(required = false) Long profileId, @RequestBody(required = false) List<Long> profileIdList) {
 
@@ -174,38 +236,6 @@ public class FilmController {
                 .status(HttpStatus.OK.value())
                 .message("Film with updated cast")
                 .data(response)
-                .build();
-        return new ResponseEntity<>(wrapper, HttpStatus.OK);
-    }
-
-    @PatchMapping("{id}/update/director")
-    public ResponseEntity<CustomResponseWrapper<FilmResponseDTO>> updateFilmDirector
-            (@PathVariable(value = "id") Long filmId, @RequestParam(required = false) Long directorId) {
-
-        Film film = filmService.updateDirector(directorId, filmId);
-        FilmResponseDTO response = filmMapper.mapFilmToFilmResponseDTO(film);
-
-        CustomResponseWrapper<FilmResponseDTO> wrapper = CustomResponseWrapper.<FilmResponseDTO>builder()
-                .status(HttpStatus.OK.value())
-                .message("Film with updated cast")
-                .data(response)
-                .build();
-
-        return new ResponseEntity<>(wrapper, HttpStatus.OK);
-    }
-
-
-
-    /*@GetMapping("/pageable")
-    public ResponseEntity<CustomResponseWrapper<PageableUserResponseDTO>> getPageable(
-            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int pageNo,
-            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int pageSize) {
-        PageableUserResponseDTO allUsersPageable = userService.getAllUsersPageable(pageNo, pageSize);
-
-        CustomResponseWrapper<PageableUserResponseDTO> wrapper = CustomResponseWrapper.<PageableUserResponseDTO>builder()
-                .status(HttpStatus.OK.value())
-                .message("List of all users")
-                .data(allUsersPageable)
                 .build();
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
     }*/

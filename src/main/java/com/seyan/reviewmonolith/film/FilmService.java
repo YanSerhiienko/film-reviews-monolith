@@ -53,14 +53,15 @@ public class FilmService {
         }
 
         if (dto.castIdList() != null) {
-            List<Profile> foundCastList = profileRepository.findAllById(dto.castIdList());
-            if (dto.castIdList().size() != foundCastList.size()) {
-                List<Long> foundCastIdList = foundCastList.stream().map(Profile::getId).toList();
+            //todo create this as a method (also use in add cast)
+            List<Profile> foundInDatabaseCastList = profileRepository.findAllById(dto.castIdList());
+            if (dto.castIdList().size() != foundInDatabaseCastList.size()) {
+                List<Long> foundCastIdList = foundInDatabaseCastList.stream().map(Profile::getId).toList();
                 dto.castIdList().removeAll(foundCastIdList);
                 throw new ProfileNotFoundException(
-                        String.format("Some cast profiles were not found from the provided ID list: %s", dto.castIdList()));
+                        String.format("Some profiles from the provided ID list were not found : %s", dto.castIdList()));
             }
-            film.getCast().addAll(foundCastList);
+            film.getCast().addAll(foundInDatabaseCastList);
             //foundCastList.forEach(film.getCast()::add);
         }
 
@@ -132,7 +133,7 @@ public class FilmService {
     }
 
     //todo addCastMember
-    public Film addCastMember(Long profileId, Long filmId) {
+    /*public Film addCastMember(Long profileId, Long filmId) {
         Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
                 String.format("No film found with the provided ID: %s", filmId)));
 
@@ -142,7 +143,7 @@ public class FilmService {
 
         film.getCast().add(profile);
         return filmRepository.save(film);
-    }
+    }*/
 
     //todo some profiles were not found with provided id's
     public Film addCastMember(List<Long> profileIdList, Long filmId) {
@@ -155,7 +156,7 @@ public class FilmService {
             List<Long> foundProfileIdList = profileList.stream().map(Profile::getId).toList();
             profileIdList.removeAll(foundProfileIdList);
             throw new ProfileNotFoundException(
-                    String.format("Some profiles were not found from the provided ID list: %s", profileIdList));
+                    String.format("Some profiles from the provided ID list were not found : %s", profileIdList));
         }
 
         film.getCast().addAll(profileList);
@@ -163,7 +164,7 @@ public class FilmService {
     }
 
     //todo removeCastMember
-    public Film removeCastMember(Long profileId, Long filmId) {
+    /*public Film removeCastMember(Long profileId, Long filmId) {
         Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
                 String.format("No film found with the provided ID: %s", filmId)));
 
@@ -173,7 +174,7 @@ public class FilmService {
 
         film.getCast().remove(profile);
         return filmRepository.save(film);
-    }
+    }*/
 
     public Film removeCastMember(List<Long> profileIdList, Long filmId) {
         Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
