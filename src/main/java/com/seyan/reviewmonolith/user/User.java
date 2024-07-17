@@ -11,6 +11,7 @@ import org.hibernate.annotations.LazyGroup;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -37,7 +38,7 @@ public class User {
 
     List<Long> watchedFilms;
 
-    List<Long> watchlistFilms;
+    Set<Long> watchlistFilms;
 
     List<Long> likedFilms;
 

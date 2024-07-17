@@ -16,7 +16,6 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -72,6 +71,10 @@ public class FilmService {
     //todo like count
     public Integer updateLikeCount(boolean isLiked) {
         //filmRepository.updateLike if true +1 / if false -1
+        return null;
+    }
+
+    public Double updateAvgRating(Long filmId, Double rating) {
         return null;
     }
 
@@ -199,7 +202,7 @@ public class FilmService {
         return filmRepository.save(film);
     }
 
-    public void updateWatchedCount(int i) {
+    public void updateWatchedCount(boolean update) {
         //todo repo method
     }
 
@@ -323,13 +326,13 @@ public class FilmService {
         switch (rating) {
             case "highest" -> {
                 return Stream.concat(
-                        filmsWithRating.stream().sorted(Comparator.comparing(Film::getRating).reversed()),
+                        filmsWithRating.stream().sorted(Comparator.comparing(Film::getAvgRating).reversed()),
                         filmsWithoutRating.stream().sorted(Comparator.comparing(Film::getWatchedCount)));
                 //return stream.sorted(Comparator.comparing(Film::getRating).reversed());
             }
             case "lowest" -> {
                 return Stream.concat(
-                        filmsWithRating.stream().sorted(Comparator.comparing(Film::getRating)),
+                        filmsWithRating.stream().sorted(Comparator.comparing(Film::getAvgRating)),
                         filmsWithoutRating.stream().sorted(Comparator.comparing(Film::getWatchedCount)));
                 //return stream.sorted(Comparator.comparing(Film::getRating));
             }
@@ -385,10 +388,10 @@ public class FilmService {
     private Stream<Film> filterFilmsByRating(Stream<Film> stream, String rating) {
         switch (rating) {
             case "highest" -> {
-                return stream.sorted(Comparator.comparing(Film::getRating).reversed());
+                return stream.sorted(Comparator.comparing(Film::getAvgRating).reversed());
             }
             case "lowest" -> {
-                return stream.sorted(Comparator.comparing(Film::getRating));
+                return stream.sorted(Comparator.comparing(Film::getAvgRating));
             }
             default -> {
                 throw new SortingParametersException(

@@ -1,4 +1,4 @@
-package com.seyan.reviewmonolith.list;
+package com.seyan.reviewmonolith.filmList.customList;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "list")
-public class FilmList {
+public class CustomList {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

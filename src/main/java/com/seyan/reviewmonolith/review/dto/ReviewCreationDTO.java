@@ -7,15 +7,16 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record ReviewCreationDTO(
+        //@NotNull
+        //Double rating,
+        //@NotNull
+        //Boolean isLikedFilm,
         @NotNull
-        Double rating,
-        @NotNull
-        Boolean isLikedFilm,
         String content,
-        /*//todo fix format
+        //todo fix format
         @JsonFormat(pattern = "yyyy-MM-dd")
-        @NotNull
-        LocalDate creationDate,*/
+        //@NotNull
+        LocalDate watchedOnDate,
         @NotNull
         Long filmId,
         @NotNull

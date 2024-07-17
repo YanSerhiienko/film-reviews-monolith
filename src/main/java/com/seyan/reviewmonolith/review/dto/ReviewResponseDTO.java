@@ -5,14 +5,15 @@ import java.util.List;
 
 public record ReviewResponseDTO(
         Long id,
-        Double rating,
-        Boolean isLikedFilm,
+        //Double rating,
+        //Boolean isLikedFilm,
         String content,
-        LocalDate creationDate,
+        LocalDate watchedOnDate,
         Long filmId,
         Long authorId,
-        Long reviewLikeCount,
-        Long commentCount,
+        //Long reviewLikeCount,
+        List<Long> likedUsersIds,
+        //Long commentCount,
         List<Long> commentIds,
         Boolean containsSpoilers,
         Boolean watchedThisFilmBefore

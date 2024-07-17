@@ -20,19 +20,29 @@ public class ReviewService {
     private final FilmService filmService;
     private final UserService userService;
 
-    public Review createReview(ReviewCreationDTO dto) {
+    /*public Review createReview(ReviewCreationDTO dto) {
         Review review = reviewMapper.mapReviewCreationDTOToReview(dto);
         //todo fix date format
-        review.setCreationDate(LocalDate.now());
+        review.setWatchedOnDate(LocalDate.now());
 
-        if (review.getIsLikedFilm()) {
+        if (dto.isLikedFilm()) {
             //todo change boolean to int (???)
             filmService.updateLikeCount(true);
             userService.addFilmToLiked(review.getAuthorId(), review.getFilmId());
+
         }
 
         filmService.updateWatchedCount(1);
         userService.addFilmToWatched(review.getAuthorId(), review.getFilmId());
+        return reviewRepository.save(review);
+    }*/
+
+    //todo add flag isHasReview to activity entity
+    public Review createReview(ReviewCreationDTO dto) {
+        Review review = reviewMapper.mapReviewCreationDTOToReview(dto);
+
+        //todo is film automatically added to watched?
+        //userService.addFilmToWatched(review.getAuthorId(), review.getFilmId());
         return reviewRepository.save(review);
     }
 
@@ -41,6 +51,8 @@ public class ReviewService {
                 String.format("No review found with the provided ID: %s", id)
         ));
     }
+
+    //todo get by /username/film/film-title
 
     public List<Review> getAllReviews() {
         return reviewRepository.findAll();

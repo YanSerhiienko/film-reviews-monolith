@@ -67,7 +67,7 @@ public class FilmMapper {
                 film.getDescription(),
                 film.getReleaseDate(),
                 film.getUrl(),
-                film.getRating(),
+                film.getAvgRating(),
                 director,
                 cast,
                 film.getGenre(),

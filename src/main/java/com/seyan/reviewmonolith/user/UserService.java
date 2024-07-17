@@ -92,6 +92,18 @@ public class UserService {
 
     }
 
+    public void removeFilmFromWatched(Long userId, Long filmId) {
+
+    }
+
+    public void addFilmToWatchlist(Long userId, Long filmId) {
+
+    }
+
+    public void removeFilmFromWatchlist(Long userId, Long filmId) {
+
+    }
+
 
     //PageableUserResponseDTO getAllUsersPageable(int pageNo, int pageSize);
     /*

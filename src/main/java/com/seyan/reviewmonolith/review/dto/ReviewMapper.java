@@ -1,7 +1,6 @@
 package com.seyan.reviewmonolith.review.dto;
 
 
-import com.seyan.reviewmonolith.profile.dto.ProfileUpdateDTO;
 import com.seyan.reviewmonolith.review.Review;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
@@ -9,7 +8,6 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Component;
 
 import java.beans.PropertyDescriptor;
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,10 +16,10 @@ import java.util.Set;
 public class ReviewMapper {
     public Review mapReviewCreationDTOToReview(ReviewCreationDTO dto) {
         return Review.builder()
-                .rating(dto.rating())
-                .isLikedFilm(dto.isLikedFilm())
+                //.rating(dto.rating())
+                //.isLikedFilm(dto.isLikedFilm())
                 .content(dto.content())
-                //.creationDate(dto.creationDate())
+                .watchedOnDate(dto.watchedOnDate())
                 .filmId(dto.filmId())
                 .authorId(dto.authorId())
                 .containsSpoilers(dto.containsSpoilers())
@@ -39,14 +37,15 @@ public class ReviewMapper {
         //BeanUtils.copyProperties(profile, response);
         return new ReviewResponseDTO(
                 review.getId(),
-                review.getRating(),
-                review.getIsLikedFilm(),
+                //review.getRating(),
+                //review.getIsLikedFilm(),
                 review.getContent(),
-                review.getCreationDate(),
+                review.getWatchedOnDate(),
                 review.getFilmId(),
                 review.getAuthorId(),
-                review.getReviewLikeCount(),
-                review.getCommentCount(),
+                review.getLikedUsersIds(),
+                //review.getReviewLikeCount(),
+                //review.getCommentCount(),
                 review.getCommentIds(),
                 review.getContainsSpoilers(),
                 review.getWatchedThisFilmBefore()

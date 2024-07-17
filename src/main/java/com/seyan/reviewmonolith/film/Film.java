@@ -7,13 +7,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -41,7 +38,7 @@ public class Film {
     @Column(unique = true)
     private String url;
 
-    private Double rating;
+    private Double avgRating;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "director_id")
@@ -71,7 +68,7 @@ public class Film {
     private List<Genre> genres;*/
 
     public Film() {
-        this.rating = 0.0;
+        this.avgRating = 0.0;
         this.cast = new HashSet<>();
         this.watchedCount = 0L;
         this.listCount = 0L;
