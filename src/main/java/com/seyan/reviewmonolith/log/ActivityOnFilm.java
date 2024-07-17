@@ -1,4 +1,4 @@
-package com.seyan.reviewmonolith.review.filmActivity;
+package com.seyan.reviewmonolith.log;
 
 import com.seyan.reviewmonolith.review.Review;
 import jakarta.persistence.*;
@@ -8,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -15,18 +17,21 @@ import org.hibernate.annotations.DynamicUpdate;
 @Entity
 @Table(name = "reviews")
 @DynamicUpdate
-public class UserActivityOnFilm {
+public class ActivityOnFilm {
     /*@Id
     private Long userId;
     @Id
     private Long filmId;*/
     @EmbeddedId
-    private UserActivityOnFilmId id;
-    private Double rating;
+    private ActivityOnFilmId id;
     private Boolean isWatched;
     private Boolean isLiked;
     private Boolean isInWatchlist;
-    private Boolean hasReview;
+    private Double rating;
+    //private Boolean hasReview;
+    //private Long lastReviewId;
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Review> filmReviews;
 
     //todo relation
     //@OneToOne

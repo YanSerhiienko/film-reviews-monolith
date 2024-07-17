@@ -1,6 +1,7 @@
 package com.seyan.reviewmonolith.review.dto;
 
 
+import com.seyan.reviewmonolith.log.dto.ActivityReviewDiaryRequest;
 import com.seyan.reviewmonolith.review.Review;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
@@ -8,6 +9,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Component;
 
 import java.beans.PropertyDescriptor;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -73,6 +75,18 @@ public class ReviewMapper {
         return reviews.stream()
                 .map(this::mapReviewToReviewResponseDTO)
                 .toList();
+    }
+
+    public Review mapActivityReviewDiaryRequestToReview(ActivityReviewDiaryRequest request) {
+        return Review.builder()
+                .filmId(request.filmId())
+                .authorId(request.userId())
+                .content(request.reviewContent())
+                .rating(request.rating())
+                .isLiked(request.isLiked())
+                .containsSpoilers(request.containsSpoilers())
+                .creationDate(LocalDate.now())
+                .build();
     }
 
     private String[] getNullFieldNames(Object source) {

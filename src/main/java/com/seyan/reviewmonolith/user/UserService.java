@@ -104,6 +104,10 @@ public class UserService {
 
     }
 
+    public boolean isFilmInWatchList(Long aLong, Long aLong1) {
+        return false;
+    }
+
 
     //PageableUserResponseDTO getAllUsersPageable(int pageNo, int pageSize);
     /*

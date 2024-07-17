@@ -1,4 +1,4 @@
-package com.seyan.reviewmonolith.review.filmActivity;
+package com.seyan.reviewmonolith.log;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;
@@ -11,7 +11,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable
-public class UserActivityOnFilmId implements Serializable {
+public class ActivityOnFilmId implements Serializable {
     private Long userId;
     private Long filmId;
 }

@@ -2,6 +2,7 @@ package com.seyan.reviewmonolith.review;
 
 import com.seyan.reviewmonolith.exception.review.ReviewNotFoundException;
 import com.seyan.reviewmonolith.film.FilmService;
+import com.seyan.reviewmonolith.log.dto.ActivityReviewDiaryRequest;
 import com.seyan.reviewmonolith.review.dto.ReviewCreationDTO;
 import com.seyan.reviewmonolith.review.dto.ReviewMapper;
 import com.seyan.reviewmonolith.review.dto.ReviewUpdateDTO;
@@ -9,7 +10,6 @@ import com.seyan.reviewmonolith.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -46,6 +46,14 @@ public class ReviewService {
         return reviewRepository.save(review);
     }
 
+    public Review createReview(ActivityReviewDiaryRequest request) {
+        Review review = reviewMapper.mapActivityReviewDiaryRequestToReview(request);
+
+        //todo is film automatically added to watched?
+        //userService.addFilmToWatched(review.getAuthorId(), review.getFilmId());
+        return reviewRepository.save(review);
+    }
+
     public Review getReviewById(Long id) {
         return reviewRepository.findById(id).orElseThrow(() -> new ReviewNotFoundException(
                 String.format("No review found with the provided ID: %s", id)
@@ -58,12 +66,14 @@ public class ReviewService {
         return reviewRepository.findAll();
     }
 
+
+    //todo rework since liked films are based on activity
     public Review updateReview(ReviewUpdateDTO dto) {
         Review review = reviewRepository.findById(dto.id()).orElseThrow(() -> new ReviewNotFoundException(
                 String.format("No review found with the provided ID: %s", dto.id())
         ));
 
-        if (dto.isLikedFilm() != review.getIsLikedFilm()) {
+        if (dto.isLikedFilm() != review.getIsLiked()) {
             filmService.updateLikeCount(dto.isLikedFilm());
             if (dto.isLikedFilm()) {
                 userService.addFilmToLiked(review.getAuthorId(), review.getFilmId());
@@ -80,7 +90,7 @@ public class ReviewService {
         Review review = reviewRepository.findById(id).orElseThrow(() -> new ReviewNotFoundException(
                 String.format("Cannot delete review:: No review found with the provided ID: %s", id)));
 
-        if (review.getIsLikedFilm()) {
+        if (review.getIsLiked()) {
             filmService.updateLikeCount(false);
             userService.removeFilmFromLiked(review.getAuthorId(), review.getFilmId());
         }

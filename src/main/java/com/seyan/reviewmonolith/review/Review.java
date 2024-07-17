@@ -21,20 +21,25 @@ public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //private Double rating;
-    //private Boolean isLikedFilm;
-    private String content;
-    //todo this field adds film to your diary
-    private LocalDate watchedOnDate;
     private Long filmId;
     private Long authorId;
+    private String content;
+    //todo has minutes
+    private LocalDate creationDate;
+    private Boolean isLiked;
+    private Double rating;
+
+    //todo this fields adds film to your diary
+    //private LocalDate watchedOnDate;
+    //private Boolean watchedThisFilmBefore;
+
+
     //private Long reviewLikeCount;
     private List<Long> likedUsersIds;
     //private Long commentCount;
     private List<Long> commentIds;
     //todo counts only if has content
     private Boolean containsSpoilers;
-    private Boolean watchedThisFilmBefore;
 
     //TODO boolean flags + user service get methods
 }
