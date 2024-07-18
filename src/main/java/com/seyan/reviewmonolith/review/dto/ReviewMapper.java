@@ -17,7 +17,10 @@ import java.util.Set;
 @Component
 public class ReviewMapper {
     public Review mapReviewCreationDTOToReview(ReviewCreationDTO dto) {
-        return Review.builder()
+        Review review = new Review();
+        BeanUtils.copyProperties(dto, review, getNullFieldNames(dto));
+        return review;
+        /*return Review.builder()
                 //.rating(dto.rating())
                 //.isLikedFilm(dto.isLikedFilm())
                 .content(dto.content())
@@ -26,7 +29,7 @@ public class ReviewMapper {
                 .authorId(dto.authorId())
                 .containsSpoilers(dto.containsSpoilers())
                 .watchedThisFilmBefore(dto.watchedThisFilmBefore())
-                .build();
+                .build();*/
     }
 
     public Review mapReviewUpdateDTOToReview(ReviewUpdateDTO source, Review destination) {
@@ -34,23 +37,20 @@ public class ReviewMapper {
         return destination;
     }
 
-    //todo remove all records
+    //todo copy properties
     public ReviewResponseDTO mapReviewToReviewResponseDTO(Review review) {
         //BeanUtils.copyProperties(profile, response);
         return new ReviewResponseDTO(
                 review.getId(),
-                //review.getRating(),
-                //review.getIsLikedFilm(),
+                review.getRating(),
+                review.getIsLiked(),
                 review.getContent(),
-                //review.getWatchedOnDate(),
+                review.getContainsSpoilers(),
+                review.getCreationDate(),
                 review.getFilmId(),
                 review.getAuthorId(),
                 review.getLikedUsersIds(),
-                //review.getReviewLikeCount(),
-                //review.getCommentCount(),
-                review.getCommentIds(),
-                review.getContainsSpoilers()
-                //review.getWatchedThisFilmBefore()
+                review.getCommentIds()
         );
     }
 
@@ -75,18 +75,6 @@ public class ReviewMapper {
         return reviews.stream()
                 .map(this::mapReviewToReviewResponseDTO)
                 .toList();
-    }
-
-    public Review mapActivityReviewDiaryRequestToReview(ActivityReviewDiaryRequest request) {
-        return Review.builder()
-                .filmId(request.filmId())
-                .authorId(request.userId())
-                .content(request.reviewContent())
-                .rating(request.rating())
-                .isLiked(request.isLiked())
-                .containsSpoilers(request.containsSpoilers())
-                .creationDate(LocalDate.now())
-                .build();
     }
 
     private String[] getNullFieldNames(Object source) {

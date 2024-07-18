@@ -13,6 +13,8 @@ public record ReviewCreationDTO(
         Boolean isLikedFilm,
         @NotNull
         String content,
+        Boolean containsSpoilers,
+
         //todo fix format
         //@JsonFormat(pattern = "yyyy-MM-dd")
         //@NotNull
@@ -20,9 +22,10 @@ public record ReviewCreationDTO(
         @NotNull
         Long filmId,
         @NotNull
-        Long authorId,
-        Boolean containsSpoilers
+        Long authorId
         //Boolean watchedThisFilmBefore
+
+
 ) {
 
 }

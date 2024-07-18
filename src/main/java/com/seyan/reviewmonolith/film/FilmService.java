@@ -6,38 +6,42 @@ import com.seyan.reviewmonolith.exception.profile.ProfileNotFoundException;
 import com.seyan.reviewmonolith.film.dto.FilmCreationDTO;
 import com.seyan.reviewmonolith.film.dto.FilmMapper;
 import com.seyan.reviewmonolith.film.dto.FilmUpdateDTO;
+import com.seyan.reviewmonolith.film.log.ActivityOnFilmRepository;
 import com.seyan.reviewmonolith.profile.Profile;
 import com.seyan.reviewmonolith.profile.ProfileRepository;
 import com.seyan.reviewmonolith.review.ReviewService;
-import org.springframework.context.annotation.Lazy;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 @Service
 public class FilmService {
     private final FilmRepository filmRepository;
     private final FilmMapper filmMapper;
 
+    //todo replace review service with controller methods
     private final ReviewService reviewService;
+
     //private final UserService userService;
 
     private final ProfileRepository profileRepository;
+    private final ActivityOnFilmRepository activityRepository;
 
 
-    public FilmService(FilmRepository filmRepository, FilmMapper filmMapper, @Lazy ReviewService reviewService, ProfileRepository profileRepository) {
+    /*public FilmService(FilmRepository filmRepository, FilmMapper filmMapper, @Lazy ReviewService reviewService, ProfileRepository profileRepository) {
         this.filmRepository = filmRepository;
         this.filmMapper = filmMapper;
         this.reviewService = reviewService;
         this.profileRepository = profileRepository;
-    }
+    }*/
 
 
     //todo add check for existing director and cast members in db
@@ -151,38 +155,48 @@ public class FilmService {
         return filmRepository.save(film);
     }
 
-    public Long updateWatchedCount(Long filmId, boolean update) {
+    public Film addWatchedCount(Long filmId, boolean toAdd) {
         Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
                 String.format("No film found with the provided ID: %s", filmId)));
 
-        Long updatedWatchedCount = film.getWatchedCount() + 1;
+        long updatedWatchedCount;
+        if (toAdd) {
+            updatedWatchedCount = film.getWatchedCount() + 1;
+        } else {
+            updatedWatchedCount = film.getWatchedCount() - 1;
+        }
+
         film.setWatchedCount(updatedWatchedCount);
-        filmRepository.save(film);
-        return updatedWatchedCount;
+        return filmRepository.save(film);
     }
 
-    //todo like count
-    public Long updateLikeCount(Long filmId, boolean isLiked) {
+    public Film addLikeCount(Long filmId, boolean toAdd) {
         Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
                 String.format("No film found with the provided ID: %s", filmId)));
 
-        Long updatedLikeCount = film.getLikeCount() + 1;
-        film.setWatchedCount(updatedLikeCount);
-        filmRepository.save(film);
-        return null;
+        long updatedLikeCount;
+        if (toAdd) {
+            updatedLikeCount = film.getLikeCount() + 1;
+        } else {
+            updatedLikeCount = film.getLikeCount() - 1;
+        }
+
+        film.setLikeCount(updatedLikeCount);
+        return filmRepository.save(film);
     }
 
-    public Double updateAvgRating(Long filmId, Double rating) {
+    public Film updateAvgRating(Long filmId, Double rating) {
         Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
                 String.format("No film found with the provided ID: %s", filmId)));
+
         film.setAvgRating(rating);
-        filmRepository.save(film);
-        return rating;
+        return filmRepository.save(film);
     }
 
     public void deleteFilm(Long id) {
-        Film film = filmRepository.findById(id).orElseThrow(() -> new FilmNotFoundException(
+        filmRepository.findById(id).orElseThrow(() -> new FilmNotFoundException(
                 String.format("No film found with the provided ID: %s", id)));
+
         filmRepository.deleteById(id);
     }
 
@@ -214,8 +228,15 @@ public class FilmService {
             stream = filmRepository.findAll().stream();
         }
 
-        if (params.containsKey("decade")) {
-            stream = filterFilmsByDecade(stream, params.get("decade"));
+        /*Stream<Film> stream = filmRepository.findAll().stream();
+
+        if (params.containsKey("popular")) {
+            stream = filterFilmsByPopularity(stream, params.get("popular"));
+        }*/
+
+        //todo change to decade (?)
+        if (params.containsKey("year")) {
+            stream = filterFilmsByYear(stream, params.get("year"));
         }
 
         if (params.containsKey("genre")) {
@@ -279,7 +300,8 @@ public class FilmService {
         //todo rated films should be sorted and go first
         //get rated and sort
 
-        List<Long> filmIdList = reviewService.getFilmIdFromReviewsWithFilmRatingByUserId(userId);
+        //List<Long> filmIdList = reviewService.getFilmIdFromReviewsWithFilmRatingByUserId(userId);
+        List<Long> filmIdList = activityRepository.findIdFilmIdByIdUserIdAndByRatingGreaterThanEqual(userId, 0.0);
 
         //Stream<Film> filmsWithLikeStream = stream.filter(f -> filmIdList.contains(f.getId()));
         //Stream<Film> filmsWithoutLikeStream = stream.filter(f -> !filmIdList.contains(f.getId()));
@@ -324,9 +346,18 @@ public class FilmService {
             LocalDate now = LocalDate.now();
             return stream.filter(it -> it.getReleaseDate().isAfter(now));
         }
-        //todo year is not a decade!!!
         int decadeParsed = Integer.parseInt(decade);
-        return stream.filter(it -> it.getReleaseDate().getYear() == decadeParsed);
+        return stream.filter(it -> it.getReleaseDate().getYear() >= decadeParsed & it.getReleaseDate().getYear() < decadeParsed + 10);
+    }
+
+    private Stream<Film> filterFilmsByYear(Stream<Film> stream, String year) {
+        if (year.equals("upcoming")) {
+            LocalDate now = LocalDate.now();
+            return stream.filter(it -> it.getReleaseDate().isAfter(now));
+        }
+
+        int yearParsed = Integer.parseInt(year);
+        return stream.filter(it -> it.getReleaseDate().getYear() == yearParsed);
     }
 
     private Stream<Film> filterFilmsByPopularity(String popularity) {
@@ -334,8 +365,49 @@ public class FilmService {
         //todo if review service is down - reply with all films
         //List<Review> reviews = reviewService.getPopularReviews(popularity);
         //List<Long> filmIdList = reviews.stream().map(Review::getFilmId).collect(Collectors.toList());
-        List<Long> filmIdList = reviewService.getFilmIdFromPopularReviews(popularity);
-        return filmRepository.findAllById(filmIdList).stream();
+
+        //List<Long> filmIdList = reviewService.getFilmIdFromPopularReviews(popularity);
+        //return filmRepository.findAllById(filmIdList).stream();
+
+        switch (popularity) {
+            case "all-time" -> {
+                return getFilmsBasedOnIdRepetitiveness().stream();
+            }
+            case "this-year" -> {
+                return getFilmsBasedOnReviewDateAfter(LocalDate.now().minusYears(1)).stream();
+            }
+            case "this-month" -> {
+                return getFilmsBasedOnReviewDateAfter(LocalDate.now().minusMonths(1)).stream();
+            }
+            case "this-week" -> {
+                return getFilmsBasedOnReviewDateAfter(LocalDate.now().minusDays(7)).stream();
+            }
+            default -> {
+                throw new SortingParametersException(
+                        "Could not parse popularity parameter, should be \"all-time\", \"this-month\", \"this-week\" or \"this-year\"");
+            }
+        }
+    }
+
+    //find reviews for the last week, count group by order by
+    //todo if review service not responding return all films
+    //todo check if it returns in particular order
+    private List<Film> getFilmsBasedOnReviewDateAfter(LocalDate date) {
+        List<Long> filmIdList = reviewService.getFilmIdBasedOnReviewDateAfter(date);
+        List<Long> filmIdListSorted = filmIdList.stream().sorted(Comparator.comparing(it -> Collections.frequency(filmIdList, it))).distinct().toList();
+        return filmRepository.findAllById(filmIdListSorted);
+    }
+
+    private List<Film> getFilmsBasedOnReviewDateBefore(LocalDate date) {
+        List<Long> filmIdList = reviewService.getFilmIdBasedOnReviewDateBefore(date);
+        List<Long> filmIdListSorted = filmIdList.stream().sorted(Comparator.comparing(it -> Collections.frequency(filmIdList, it))).distinct().toList();
+        return filmRepository.findAllById(filmIdListSorted);
+    }
+
+    private List<Film> getFilmsBasedOnIdRepetitiveness() {
+        List<Long> filmIdList = reviewService.getAllFilmIds();
+        List<Long> filmIdListSorted = filmIdList.stream().sorted(Comparator.comparing(it -> Collections.frequency(filmIdList, it))).distinct().toList();
+        return filmRepository.findAllById(filmIdListSorted);
     }
 
     private Stream<Film> filterFilmsByReleaseDate(Stream<Film> stream, String release) {

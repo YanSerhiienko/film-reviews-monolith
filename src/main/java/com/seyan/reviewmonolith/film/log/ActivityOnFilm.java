@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -28,6 +29,7 @@ public class ActivityOnFilm {
     private Boolean isLiked;
     private Boolean isInWatchlist;
     private Double rating;
+    private LocalDate watchlistAddDate;
     //private Boolean hasReview;
     //private Long lastReviewId;
     //@OneToMany(fetch = FetchType.LAZY)

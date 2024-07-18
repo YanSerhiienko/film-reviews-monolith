@@ -73,12 +73,12 @@ public class UserService {
     }*/
 
     //todo custom repo select from user
-    public List<Long> getLikedFilms(Long id) {
+    /*public List<Long> getLikedFilms(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(
                 String.format("No user found with the provided ID: %s", id)
         ));
         return user.getLikedFilms();
-    }
+    }*/
 
     public void addFilmToLiked(Long userId, Long filmId) {
         //todo updateLikedFilms

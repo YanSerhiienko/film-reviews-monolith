@@ -3,12 +3,15 @@ package com.seyan.reviewmonolith.film.log.dto;
 
 import com.seyan.reviewmonolith.film.log.ActivityOnFilmId;
 import com.seyan.reviewmonolith.film.log.ActivityOnFilm;
+import com.seyan.reviewmonolith.review.Review;
+import com.seyan.reviewmonolith.review.dto.ReviewCreationDTO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Component;
 
 import java.beans.PropertyDescriptor;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,7 +32,8 @@ public class ActivityOnFilmMapper {
                 activity.getIsWatched(),
                 activity.getIsLiked(),
                 activity.getIsInWatchlist(),
-                activity.getRating()
+                activity.getRating(),
+                activity.getWatchlistAddDate()
                 //hasReview
         );
     }
@@ -95,5 +99,26 @@ public class ActivityOnFilmMapper {
                 .build();
     }
 
+    public Review mapActivityReviewDiaryRequestToReview(ActivityReviewDiaryRequest request) {
+        return Review.builder()
+                .filmId(request.filmId())
+                .authorId(request.userId())
+                .content(request.reviewContent())
+                .rating(request.rating())
+                .isLiked(request.isLiked())
+                .containsSpoilers(request.containsSpoilers())
+                .creationDate(LocalDate.now())
+                .build();
+    }
 
+    public ReviewCreationDTO mapActivityReviewDiaryRequestToReviewCreationDTO(ActivityReviewDiaryRequest request) {
+        return new ReviewCreationDTO(
+                request.rating(),
+                request.isLiked(),
+                request.reviewContent(),
+                request.containsSpoilers(),
+                request.filmId(),
+                request.userId()
+        );
+    }
 }

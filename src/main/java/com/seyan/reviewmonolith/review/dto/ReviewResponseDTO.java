@@ -2,6 +2,7 @@ package com.seyan.reviewmonolith.review.dto;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
 
 public record ReviewResponseDTO(
         Long id,
@@ -9,14 +10,14 @@ public record ReviewResponseDTO(
         Boolean isLikedFilm,
         String content,
         //LocalDate watchedOnDate,
+        Boolean containsSpoilers,
+        LocalDate creationDate,
         Long filmId,
         Long authorId,
         //Long reviewLikeCount,
-        List<Long> likedUsersIds,
+        Set<Long> likedUsersIds,
         //Long commentCount,
-        List<Long> commentIds,
-        Boolean containsSpoilers,
-        LocalDate creationDate
+        Set<Long> commentIds
         //Boolean watchedThisFilmBefore
 ) {
 

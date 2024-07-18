@@ -1,17 +1,18 @@
 package com.seyan.reviewmonolith.film.log;
 
 import com.seyan.reviewmonolith.exception.film.ActivityDeleteException;
+import com.seyan.reviewmonolith.exception.film.ActivityNotFoundException;
 import com.seyan.reviewmonolith.film.FilmService;
 import com.seyan.reviewmonolith.film.log.dto.ActivityOnFilmMapper;
 import com.seyan.reviewmonolith.film.log.dto.ActivityReviewDiaryRequest;
 import com.seyan.reviewmonolith.review.Review;
-import com.seyan.reviewmonolith.review.ReviewRepository;
 import com.seyan.reviewmonolith.review.ReviewService;
-import com.seyan.reviewmonolith.user.UserService;
+import com.seyan.reviewmonolith.review.dto.ReviewCreationDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -20,16 +21,19 @@ public class ActivityOnFilmService {
     private final ActivityOnFilmRepository activityRepository;
     private final ActivityOnFilmMapper activityMapper;
     private final FilmService filmService;
-    //private final UserService userService;
+
+    //todo replace review service with controller methods
     private final ReviewService reviewService;
-    //private final ReviewRepository reviewRepository;
 
 
+
+    //todo add external review / diary entities
     public ActivityOnFilm createOrUpdateActivity(ActivityReviewDiaryRequest request) {
         ActivityOnFilm activity = activityMapper.mapActivityReviewDiaryRequestToActivityOnFilm(request);
 
         if (request.reviewContent() != null) {
-            Review review = reviewService.createReview(request);
+            ReviewCreationDTO dto = activityMapper.mapActivityReviewDiaryRequestToReviewCreationDTO(request);
+            Review review = reviewService.createReview(dto);
             //activity.getFilmReviews().add(review);
             activity.setIsInWatchlist(false);
             //userService.removeFilmFromWatchlist(request.userId(), request.filmId());
@@ -53,19 +57,21 @@ public class ActivityOnFilmService {
         return activityRepository.findAll();
     }
 
-    /*public List<ActivityOnFilm> getAllActivities() {
+    //////////////////////////////////////////////// DEBUG METHODS
+    public List<ActivityOnFilm> getAllActivities() {
         return activityRepository.findAll();
-    }*/
+    }
 
-    /*public List<ActivityOnFilm> getAllActivitiesByUserId(Long userId) {
+    public List<ActivityOnFilm> getAllActivitiesByUserId(Long userId) {
         return activityRepository.findByUserId(userId);
-    }*/
+    }
 
-    /*public ActivityOnFilm getActivityById(ActivityOnFilmId id) {
+    public ActivityOnFilm getActivityById(ActivityOnFilmId id) {
         return activityRepository.findById(id).orElseThrow(() -> new ActivityNotFoundException(
                 String.format("No film activity found with the provided ID: %s", id)
         ));
-    }*/
+    }
+    ////////////////////////////////////////////////
 
     public ActivityOnFilm getOrCreateActivityById(ActivityOnFilmId id) {
         return activityRepository.findById(id).orElseGet(() -> ActivityOnFilm.builder()
@@ -83,11 +89,11 @@ public class ActivityOnFilmService {
         ActivityOnFilm activity = getOrCreateActivityById(new ActivityOnFilmId(userId, filmId));
         if (activity.getIsLiked()) {
             activity.setIsLiked(false);
-            filmService.updateLikeCount(filmId, false);
+            filmService.addLikeCount(filmId, false);
             //userService.removeFilmFromLiked(userId, filmId);
         } else {
             activity.setIsLiked(true);
-            filmService.updateLikeCount(filmId, true);
+            filmService.addLikeCount(filmId, true);
             //userService.addFilmToLiked(userId, filmId);
         }
         return activityRepository.save(activity);
@@ -120,7 +126,6 @@ public class ActivityOnFilmService {
     }
 
 
-    //todo cant be removed from watched while has reviews or rating
     @Transactional
     public ActivityOnFilm updateIsWatched(Long userId, Long filmId) {
         ActivityOnFilm activity = getOrCreateActivityById(new ActivityOnFilmId(userId, filmId));
@@ -135,12 +140,12 @@ public class ActivityOnFilmService {
 
             activity.setIsWatched(false);
 
-            filmService.updateWatchedCount(filmId, false);
+            filmService.addWatchedCount(filmId, false);
 
             //userService.removeFilmFromWatched(userId, filmId);
         } else {
             activity.setIsWatched(true);
-            filmService.updateWatchedCount(filmId, true);
+            filmService.addWatchedCount(filmId, true);
             //userService.addFilmToWatched(userId, filmId);
         }
 
@@ -163,6 +168,7 @@ public class ActivityOnFilmService {
             //userService.removeFilmFromWatchlist(userId, filmId);
         } else {
             activity.setIsInWatchlist(true);
+            activity.setWatchlistAddDate(LocalDate.now());
             //userService.addFilmToWatchlist(userId, filmId);
         }
         return activityRepository.save(activity);

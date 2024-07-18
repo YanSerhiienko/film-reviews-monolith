@@ -11,8 +11,6 @@ public record ReviewUpdateDTO(
         Double rating,
         Boolean isLikedFilm,
         String content,
-        Long filmId,
-        Long authorId,
         Boolean containsSpoilers,
         Boolean watchedThisFilmBefore
 ) {

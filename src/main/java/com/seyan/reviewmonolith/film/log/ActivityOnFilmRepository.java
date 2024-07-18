@@ -21,6 +21,10 @@ public interface ActivityOnFilmRepository extends JpaRepository<ActivityOnFilm, 
     @Query(value = "select * from activity_on_film where id.user_id = :userId and is_liked = true", nativeQuery = true)
     List<ActivityOnFilm> findLikedFilmsActivities(@Param("userId") Long userId);
 
+    List<Long> findIdFilmIdByIdUserIdAndByRatingGreaterThanEqual(Long userId, Double rating);
+
+    @Query(value = "select id.film_id from activity_on_film where id.user_id = :userId and rating > 0.0", nativeQuery = true)
+    List<ActivityOnFilm> findFilmIdByUserIdAndByRatingGreaterThan(@Param("userId") Long userId, @Param("rating") Double rating);
 
     //countByJobIdAndToDeleteIsTrue
 }
