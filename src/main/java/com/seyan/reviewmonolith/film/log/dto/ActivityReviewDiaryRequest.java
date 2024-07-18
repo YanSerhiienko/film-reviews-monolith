@@ -1,7 +1,6 @@
-package com.seyan.reviewmonolith.log.dto;
+package com.seyan.reviewmonolith.film.log.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.seyan.reviewmonolith.log.ActivityOnFilmId;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
 

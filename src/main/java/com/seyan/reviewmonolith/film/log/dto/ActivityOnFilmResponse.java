@@ -1,14 +1,14 @@
-package com.seyan.reviewmonolith.log.dto;
+package com.seyan.reviewmonolith.film.log.dto;
 
-import com.seyan.reviewmonolith.log.ActivityOnFilmId;
+import com.seyan.reviewmonolith.film.log.ActivityOnFilmId;
 
 public record ActivityOnFilmResponse(
         ActivityOnFilmId id,
-        Double rating,
         Boolean isWatched,
         Boolean isLiked,
         Boolean isInWatchlist,
-        Boolean hasReview
+        Double rating
+        //Boolean hasReview
 ) {
 
 }

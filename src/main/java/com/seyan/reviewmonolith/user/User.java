@@ -36,19 +36,19 @@ public class User {
 
     private Role role;
 
-    List<Long> watchedFilms;
+    //List<Long> watchedFilms;
 
-    Set<Long> watchlistFilms;
+    //Set<Long> watchlistFilms;
 
-    List<Long> likedFilms;
+    //List<Long> likedFilms;
 
-    List<Long> likedReviews;
+    //List<Long> likedReviews;
 
-    List<Long> likedLists;
+    //List<Long> likedLists;
 
-    List<Long> followingUsers;
+    //List<Long> followingUsers;
 
-    List<Long> followersUsers;
+    //List<Long> followersUsers;
 
-    List<Long> blockedUsers;
+    //List<Long> blockedUsers;
 }

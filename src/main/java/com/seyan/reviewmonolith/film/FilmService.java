@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -68,16 +69,6 @@ public class FilmService {
         return filmRepository.save(withUrl);
     }
 
-    //todo like count
-    public Integer updateLikeCount(boolean isLiked) {
-        //filmRepository.updateLike if true +1 / if false -1
-        return null;
-    }
-
-    public Double updateAvgRating(Long filmId, Double rating) {
-        return null;
-    }
-
     private Film createUrl(Film film) {
         //todo fix count when films were deleted
         String[] title = film.getTitle().split(" ");
@@ -106,21 +97,6 @@ public class FilmService {
                 String.format("No film found with the provided ID: %s", id)));
     }
 
-    //TODO CHECK UPDATE PROFILE WITHOUT CASCADE
-//    public Film updateFilm(FilmUpdateDTO dto) {
-//        Film film = filmRepository.findById(dto.id()).orElseThrow(() -> new FilmNotFoundException(
-//                String.format("No film found with the provided ID: %s", dto.id())));
-//
-//        Film mapped = filmMapper.mapFilmUpdateDTOToFilm(dto, film);
-//
-//        if (dto.title() != null && !dto.title().equals(film.getTitle())) {
-//            Film mappedWithUrl = createUrl(mapped);
-//            return filmRepository.save(mappedWithUrl);
-//        }
-//
-//        return filmRepository.save(mapped);
-//    }
-
     public Film updateFilm(FilmUpdateDTO dto, Long id) {
         Film film = filmRepository.findById(id).orElseThrow(() -> new FilmNotFoundException(
                 String.format("No film found with the provided ID: %s", id)));
@@ -135,20 +111,6 @@ public class FilmService {
         return filmRepository.save(mapped);
     }
 
-    //todo addCastMember
-    /*public Film addCastMember(Long profileId, Long filmId) {
-        Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
-                String.format("No film found with the provided ID: %s", filmId)));
-
-        Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ProfileNotFoundException(
-                String.format("No profile found with the provided ID: %s", profileId)
-        ));
-
-        film.getCast().add(profile);
-        return filmRepository.save(film);
-    }*/
-
-    //todo some profiles were not found with provided id's
     public Film addCastMember(List<Long> profileIdList, Long filmId) {
         Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
                 String.format("No film found with the provided ID: %s", filmId)));
@@ -165,19 +127,6 @@ public class FilmService {
         film.getCast().addAll(profileList);
         return filmRepository.save(film);
     }
-
-    //todo removeCastMember
-    /*public Film removeCastMember(Long profileId, Long filmId) {
-        Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
-                String.format("No film found with the provided ID: %s", filmId)));
-
-        Profile profile = profileRepository.findById(profileId).orElseThrow(() -> new ProfileNotFoundException(
-                String.format("No profile found with the provided ID: %s", profileId)
-        ));
-
-        film.getCast().remove(profile);
-        return filmRepository.save(film);
-    }*/
 
     public Film removeCastMember(List<Long> profileIdList, Long filmId) {
         Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
@@ -202,8 +151,33 @@ public class FilmService {
         return filmRepository.save(film);
     }
 
-    public void updateWatchedCount(boolean update) {
-        //todo repo method
+    public Long updateWatchedCount(Long filmId, boolean update) {
+        Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
+                String.format("No film found with the provided ID: %s", filmId)));
+
+        Long updatedWatchedCount = film.getWatchedCount() + 1;
+        film.setWatchedCount(updatedWatchedCount);
+        filmRepository.save(film);
+        return updatedWatchedCount;
+    }
+
+    //todo like count
+    public Long updateLikeCount(Long filmId, boolean isLiked) {
+        Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
+                String.format("No film found with the provided ID: %s", filmId)));
+
+        Long updatedLikeCount = film.getLikeCount() + 1;
+        film.setWatchedCount(updatedLikeCount);
+        filmRepository.save(film);
+        return null;
+    }
+
+    public Double updateAvgRating(Long filmId, Double rating) {
+        Film film = filmRepository.findById(filmId).orElseThrow(() -> new FilmNotFoundException(
+                String.format("No film found with the provided ID: %s", filmId)));
+        film.setAvgRating(rating);
+        filmRepository.save(film);
+        return rating;
     }
 
     public void deleteFilm(Long id) {
@@ -212,13 +186,8 @@ public class FilmService {
         filmRepository.deleteById(id);
     }
 
-    /*public Film getFilmByTitle(String title) {
-        return filmRepository.findByTitle(title).orElseThrow(() -> new FilmNotFoundException(
-                String.format("No film found with the provided title: %s", title)
-        ));
-    }*/
-
     public List<Film> getAllFilmsByTitle(String title) {
+        //todo should parse expression with "+"
         //String[] splitTitle = title.split("+");
         String[] split = title.split("-");
         StringBuilder builder = new StringBuilder();
@@ -226,12 +195,11 @@ public class FilmService {
             builder.append(split[i]).append(" ");
         }
         String parsedTitle = builder.append(split[split.length - 1]).toString();
-        System.out.println("_____________________________________________parsedTitle = " + parsedTitle);
+
         return filmRepository.findByTitleContaining(parsedTitle);
     }
 
     public Film getFilmByUrl(String filmUrl) {
-        //todo change throw msg???
         return filmRepository.findByUrl(filmUrl).orElseThrow(() -> new FilmNotFoundException(
                 String.format("No film found with the provided url: %s", filmUrl)
         ));

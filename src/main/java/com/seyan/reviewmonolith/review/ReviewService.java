@@ -2,7 +2,7 @@ package com.seyan.reviewmonolith.review;
 
 import com.seyan.reviewmonolith.exception.review.ReviewNotFoundException;
 import com.seyan.reviewmonolith.film.FilmService;
-import com.seyan.reviewmonolith.log.dto.ActivityReviewDiaryRequest;
+import com.seyan.reviewmonolith.film.log.dto.ActivityReviewDiaryRequest;
 import com.seyan.reviewmonolith.review.dto.ReviewCreationDTO;
 import com.seyan.reviewmonolith.review.dto.ReviewMapper;
 import com.seyan.reviewmonolith.review.dto.ReviewUpdateDTO;
@@ -20,37 +20,14 @@ public class ReviewService {
     private final FilmService filmService;
     private final UserService userService;
 
-    /*public Review createReview(ReviewCreationDTO dto) {
-        Review review = reviewMapper.mapReviewCreationDTOToReview(dto);
-        //todo fix date format
-        review.setWatchedOnDate(LocalDate.now());
-
-        if (dto.isLikedFilm()) {
-            //todo change boolean to int (???)
-            filmService.updateLikeCount(true);
-            userService.addFilmToLiked(review.getAuthorId(), review.getFilmId());
-
-        }
-
-        filmService.updateWatchedCount(1);
-        userService.addFilmToWatched(review.getAuthorId(), review.getFilmId());
-        return reviewRepository.save(review);
-    }*/
-
     //todo add flag isHasReview to activity entity
     public Review createReview(ReviewCreationDTO dto) {
         Review review = reviewMapper.mapReviewCreationDTOToReview(dto);
-
-        //todo is film automatically added to watched?
-        //userService.addFilmToWatched(review.getAuthorId(), review.getFilmId());
         return reviewRepository.save(review);
     }
 
     public Review createReview(ActivityReviewDiaryRequest request) {
         Review review = reviewMapper.mapActivityReviewDiaryRequestToReview(request);
-
-        //todo is film automatically added to watched?
-        //userService.addFilmToWatched(review.getAuthorId(), review.getFilmId());
         return reviewRepository.save(review);
     }
 
@@ -74,7 +51,7 @@ public class ReviewService {
         ));
 
         if (dto.isLikedFilm() != review.getIsLiked()) {
-            filmService.updateLikeCount(dto.isLikedFilm());
+            filmService.updateLikeCount(dto.filmId(), dto.isLikedFilm());
             if (dto.isLikedFilm()) {
                 userService.addFilmToLiked(review.getAuthorId(), review.getFilmId());
             } else {
@@ -91,11 +68,16 @@ public class ReviewService {
                 String.format("Cannot delete review:: No review found with the provided ID: %s", id)));
 
         if (review.getIsLiked()) {
-            filmService.updateLikeCount(false);
+            filmService.updateLikeCount(review.getFilmId(), false);
             userService.removeFilmFromLiked(review.getAuthorId(), review.getFilmId());
         }
 
         reviewRepository.deleteById(id);
+    }
+
+    //todo repo method count
+    public int countUserReviewsForFilm(Long userId, Long filmId) {
+        return reviewRepository.countByUserIdAndFilmId(userId, filmId);
     }
 
     public List<Review> getPopularReviews(String popularity) {

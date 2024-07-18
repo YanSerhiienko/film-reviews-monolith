@@ -1,11 +1,9 @@
-package com.seyan.reviewmonolith.log;
+package com.seyan.reviewmonolith.film.log;
 
 import com.seyan.reviewmonolith.exception.film.ActivityDeleteException;
-import com.seyan.reviewmonolith.exception.film.ActivityNotFoundException;
 import com.seyan.reviewmonolith.film.FilmService;
-import com.seyan.reviewmonolith.log.dto.ActivityOnFilmMapper;
-import com.seyan.reviewmonolith.log.dto.ActivityOnFilmRequest;
-import com.seyan.reviewmonolith.log.dto.ActivityReviewDiaryRequest;
+import com.seyan.reviewmonolith.film.log.dto.ActivityOnFilmMapper;
+import com.seyan.reviewmonolith.film.log.dto.ActivityReviewDiaryRequest;
 import com.seyan.reviewmonolith.review.Review;
 import com.seyan.reviewmonolith.review.ReviewRepository;
 import com.seyan.reviewmonolith.review.ReviewService;
@@ -22,19 +20,19 @@ public class ActivityOnFilmService {
     private final ActivityOnFilmRepository activityRepository;
     private final ActivityOnFilmMapper activityMapper;
     private final FilmService filmService;
-    private final UserService userService;
+    //private final UserService userService;
     private final ReviewService reviewService;
-    private final ReviewRepository reviewRepository;
+    //private final ReviewRepository reviewRepository;
 
-    @Transactional
+
     public ActivityOnFilm createOrUpdateActivity(ActivityReviewDiaryRequest request) {
         ActivityOnFilm activity = activityMapper.mapActivityReviewDiaryRequestToActivityOnFilm(request);
 
         if (request.reviewContent() != null) {
             Review review = reviewService.createReview(request);
-            activity.getFilmReviews().add(review);
+            //activity.getFilmReviews().add(review);
             activity.setIsInWatchlist(false);
-            userService.removeFilmFromWatchlist(request.userId(), request.filmId());
+            //userService.removeFilmFromWatchlist(request.userId(), request.filmId());
         }
 
         return activityRepository.save(activity);
@@ -70,7 +68,13 @@ public class ActivityOnFilmService {
     }*/
 
     public ActivityOnFilm getOrCreateActivityById(ActivityOnFilmId id) {
-        return activityRepository.findById(id).orElseGet(() -> ActivityOnFilm.builder().id(id).build());
+        return activityRepository.findById(id).orElseGet(() -> ActivityOnFilm.builder()
+                .id(id)
+                .isWatched(false)
+                .isLiked(false)
+                .isInWatchlist(false)
+                .rating(0.0)
+                .build());
     }
 
     //todo check for null exceptions
@@ -79,12 +83,12 @@ public class ActivityOnFilmService {
         ActivityOnFilm activity = getOrCreateActivityById(new ActivityOnFilmId(userId, filmId));
         if (activity.getIsLiked()) {
             activity.setIsLiked(false);
-            filmService.updateLikeCount(false);
-            userService.removeFilmFromLiked(userId, filmId);
+            filmService.updateLikeCount(filmId, false);
+            //userService.removeFilmFromLiked(userId, filmId);
         } else {
             activity.setIsLiked(true);
-            filmService.updateLikeCount(true);
-            userService.addFilmToLiked(userId, filmId);
+            filmService.updateLikeCount(filmId, true);
+            //userService.addFilmToLiked(userId, filmId);
         }
         return activityRepository.save(activity);
     }
@@ -94,6 +98,7 @@ public class ActivityOnFilmService {
         ActivityOnFilm activity = getOrCreateActivityById(new ActivityOnFilmId(userId, filmId));
         activity.setRating(rating);
         activity.setIsWatched(true);
+        activity.setIsInWatchlist(false);
         activityRepository.save(activity);
         Double avgRating = getFilmAvgRating(filmId);
         filmService.updateAvgRating(filmId, avgRating);
@@ -103,7 +108,7 @@ public class ActivityOnFilmService {
     @Transactional
     public ActivityOnFilm removeRating(Long userId, Long filmId) {
         ActivityOnFilm activity = getOrCreateActivityById(new ActivityOnFilmId(userId, filmId));
-        activity.setRating(null);
+        activity.setRating(0.0);
         activityRepository.save(activity);
         Double avgRating = getFilmAvgRating(filmId);
         filmService.updateAvgRating(filmId, avgRating);
@@ -121,8 +126,8 @@ public class ActivityOnFilmService {
         ActivityOnFilm activity = getOrCreateActivityById(new ActivityOnFilmId(userId, filmId));
 
         if (activity.getIsWatched()) {
-
-            if (activity.getRating() != null || activity.getFilmReviews().size() > 0) {
+            boolean isHasReviews = checkIfHasReviews(userId, filmId);
+            if (activity.getRating() != null || isHasReviews) {
                 throw new ActivityDeleteException(
                         String.format("Film with the provided ID has rating or reviews and cannot be removed from watched: %s", filmId)
                 );
@@ -130,34 +135,48 @@ public class ActivityOnFilmService {
 
             activity.setIsWatched(false);
 
-            filmService.updateWatchedCount(false);
+            filmService.updateWatchedCount(filmId, false);
 
-            userService.removeFilmFromWatched(userId, filmId);
+            //userService.removeFilmFromWatched(userId, filmId);
         } else {
             activity.setIsWatched(true);
-            filmService.updateWatchedCount(true);
-            userService.addFilmToWatched(userId, filmId);
+            filmService.updateWatchedCount(filmId, true);
+            //userService.addFilmToWatched(userId, filmId);
         }
 
         return activityRepository.save(activity);
     }
 
-    @Transactional
+    //todo return true if review service is not responding (on microservice layer)
+    private boolean checkIfHasReviews(Long userId, Long filmId) {
+        int reviewCount = reviewService.countUserReviewsForFilm(userId, filmId);
+        return reviewCount > 0;
+    }
+
+
+    //todo list service
+    //@Transactional
     public ActivityOnFilm updateIsInWatchlist(Long userId, Long filmId) {
         ActivityOnFilm activity = getOrCreateActivityById(new ActivityOnFilmId(userId, filmId));
         if (activity.getIsInWatchlist()) {
             activity.setIsInWatchlist(false);
-            userService.removeFilmFromWatchlist(userId, filmId);
+            //userService.removeFilmFromWatchlist(userId, filmId);
         } else {
             activity.setIsInWatchlist(true);
-            userService.addFilmToWatchlist(userId, filmId);
+            //userService.addFilmToWatchlist(userId, filmId);
         }
         return activityRepository.save(activity);
     }
 
-    //todo deleteIfEmpty (?)
-    private boolean deleteIfEmpty(ActivityOnFilm activity) {
-
+    //todo deleteIfEmpty (?) probably i should never use this method
+    private void deleteIfEmpty(ActivityOnFilm activity) {
+        if (!activity.getIsWatched()
+                & activity.getRating() == 0.0
+                & !activity.getIsLiked()
+                & !activity.getIsInWatchlist()
+        ) {
+            activityRepository.deleteById(activity.getId());
+        }
     }
 
     /*public ActivityOnFilm updateHasReview(Long userId, Long filmId) {

@@ -8,21 +8,21 @@ import java.util.List;
 
 public record ReviewCreationDTO(
         //@NotNull
-        //Double rating,
+        Double rating,
         //@NotNull
-        //Boolean isLikedFilm,
+        Boolean isLikedFilm,
         @NotNull
         String content,
         //todo fix format
-        @JsonFormat(pattern = "yyyy-MM-dd")
+        //@JsonFormat(pattern = "yyyy-MM-dd")
         //@NotNull
-        LocalDate watchedOnDate,
+        //LocalDate watchedOnDate,
         @NotNull
         Long filmId,
         @NotNull
         Long authorId,
-        Boolean containsSpoilers,
-        Boolean watchedThisFilmBefore
+        Boolean containsSpoilers
+        //Boolean watchedThisFilmBefore
 ) {
 
 }

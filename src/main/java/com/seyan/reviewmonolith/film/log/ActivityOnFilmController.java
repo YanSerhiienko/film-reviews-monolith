@@ -1,12 +1,8 @@
-package com.seyan.reviewmonolith.log;
+package com.seyan.reviewmonolith.film.log;
 
-import com.seyan.reviewmonolith.film.Film;
-import com.seyan.reviewmonolith.film.dto.FilmResponseDTO;
-import com.seyan.reviewmonolith.film.dto.FilmUpdateDTO;
-import com.seyan.reviewmonolith.log.dto.ActivityOnFilmMapper;
-import com.seyan.reviewmonolith.log.dto.ActivityOnFilmRequest;
-import com.seyan.reviewmonolith.log.dto.ActivityOnFilmResponse;
-import com.seyan.reviewmonolith.log.dto.ActivityReviewDiaryRequest;
+import com.seyan.reviewmonolith.film.log.dto.ActivityOnFilmMapper;
+import com.seyan.reviewmonolith.film.log.dto.ActivityOnFilmResponse;
+import com.seyan.reviewmonolith.film.log.dto.ActivityReviewDiaryRequest;
 import com.seyan.reviewmonolith.responseWrapper.CustomResponseWrapper;
 import com.seyan.reviewmonolith.user.UserService;
 import jakarta.validation.Valid;
@@ -16,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")

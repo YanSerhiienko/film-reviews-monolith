@@ -18,11 +18,12 @@ import java.util.Set;
 public class FilmMapper {
     public Film mapFilmCreationDTOToFilm(FilmCreationDTO dto) {
         Film film = new Film();
-        /*film.setTitle(dto.title());
-        film.setDescription(dto.description());
-        film.setReleaseDate(dto.releaseDate());
-        film.setGenre(dto.genre());
-        film.setRunningTimeMinutes(dto.runningTimeMinutes());*/
+
+                /*film.setTitle(dto.title());
+                film.setDescription(dto.description());
+                film.setReleaseDate(dto.releaseDate());
+                film.setGenre(dto.genre());
+                film.setRunningTimeMinutes(dto.runningTimeMinutes());*/
         BeanUtils.copyProperties(dto, film, getNullFieldNames(dto));
         /*return Film.builder()
                 .title(dto.title())

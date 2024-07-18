@@ -1,4 +1,4 @@
-package com.seyan.reviewmonolith.log;
+package com.seyan.reviewmonolith.film.log;
 
 import com.seyan.reviewmonolith.review.Review;
 import jakarta.persistence.*;
@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "reviews")
+@Table(name = "activity_on_film")
 @DynamicUpdate
 public class ActivityOnFilm {
     /*@Id
@@ -30,8 +30,8 @@ public class ActivityOnFilm {
     private Double rating;
     //private Boolean hasReview;
     //private Long lastReviewId;
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<Review> filmReviews;
+    //@OneToMany(fetch = FetchType.LAZY)
+    //private List<Long> filmReviewIds;
 
     //todo relation
     //@OneToOne
