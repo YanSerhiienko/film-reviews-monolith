@@ -4,12 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -18,7 +15,7 @@ import java.util.Set;
 @Builder
 @Entity
 @Table(name = "reviews")
-@DynamicUpdate
+//@DynamicUpdate
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,14 +26,14 @@ public class Review {
     private Boolean containsSpoilers;
     private LocalDate creationDate;
     private Long filmId;
-    private Long authorId;
+    private Long userId;
 
     private Set<Long> likedUsersIds;
     private Set<Long> commentIds;
 
     //todo this fields adds film to your diary
-    //private LocalDate watchedOnDate;
-    //private Boolean watchedThisFilmBefore;
+    private LocalDate watchedOnDate;
+    private Boolean watchedThisFilmBefore;
 
 
     //private Long reviewLikeCount;
@@ -50,6 +47,7 @@ public class Review {
 
 
     public Review() {
+        this.creationDate = LocalDate.now();
         this.likedUsersIds = new HashSet<>();
         this.commentIds = new HashSet<>();
     }

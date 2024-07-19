@@ -72,6 +72,7 @@ public interface FilmRepository extends JpaRepository<Film, Long> {
     List<Film> findByTitleContaining(String title);
 
     int countByUrlContaining(String url);
+    int countByTitleIgnoreCase(String title);
 
     //List<Film> findByRatingDesc(Double rating);
 

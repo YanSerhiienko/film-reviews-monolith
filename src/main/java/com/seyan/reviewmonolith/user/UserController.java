@@ -1,6 +1,5 @@
 package com.seyan.reviewmonolith.user;
 
-import com.seyan.reviewmonolith.film.FilmService;
 import com.seyan.reviewmonolith.responseWrapper.CustomResponseWrapper;
 import com.seyan.reviewmonolith.user.dto.UserCreationDTO;
 import com.seyan.reviewmonolith.user.dto.UserMapper;
@@ -9,11 +8,9 @@ import com.seyan.reviewmonolith.user.dto.UserUpdateDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor

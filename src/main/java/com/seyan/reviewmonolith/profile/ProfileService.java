@@ -27,7 +27,8 @@ public class ProfileService {
     public Profile createProfile(ProfileCreationDTO dto) {
         Profile profile = profileMapper.mapPofileCreationDTOToProfile(dto);
 
-        profileRepository.save(profile);
+        Profile withUrl = createUrl(profile);
+        profileRepository.save(withUrl);
 
         if (dto.starringFilmsId() != null) {
             addStarringFilm(profile.getId(), dto.starringFilmsId());
@@ -42,24 +43,25 @@ public class ProfileService {
 
     private Profile createUrl(Profile profile) {
         //todo fix count when profiles were deleted
-        String[] name = profile.getName().split(" ");
+        String[] name = profile.getName().toLowerCase().split(" ");
         StringBuilder urlBuilder = new StringBuilder();
 
-        for (String s : name) {
-            urlBuilder.append(s).append("-");
+        for (int i = 0; i <name.length - 1; i++) {
+            urlBuilder.append(name[i]).append("-");
         }
+        urlBuilder.append(name[name.length - 1]);
 
         String url = urlBuilder.toString();
+        profile.setUrl(url);
 
-        int similarUrlCount = profileRepository.countByUrlContaining(url);
+        int similarNameCount = profileRepository.countByNameIgnoreCase(profile.getName());
 
-        if (similarUrlCount > 0) {
-            urlBuilder.append("-").append(++similarUrlCount);
+        if (similarNameCount > 0) {
+            urlBuilder.append("-").append(++similarNameCount);
             profile.setUrl(urlBuilder.toString());
             return profile;
         }
 
-        profile.setUrl(url);
         return profile;
     }
 

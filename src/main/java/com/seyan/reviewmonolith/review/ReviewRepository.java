@@ -14,6 +14,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     int countByUserIdAndFilmId(Long userId, Long filmId);
     List<Review> findByFilmId(Long filmId);
 
+    List<Review> findByFilmIdAndContentNotNull(Long filmId);
+
     @Query(value = "select film_id from reviews where creation_date >= :date", nativeQuery = true)
     List<Long> findFilmIdBasedOnReviewCreationDateAfter(@Param("date") LocalDate date);
 
@@ -22,4 +24,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query(value = "select film_id from reviews", nativeQuery = true)
     List<Long> findAllFilmIds();
+
+    List<Review> findByUserId(Long userId);
+
+    List<Review> findByUserIdAndWatchedOnDateNotNull(Long userId);
 }

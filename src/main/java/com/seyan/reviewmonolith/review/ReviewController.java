@@ -83,13 +83,25 @@ public class ReviewController {
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
     }
 
-    @GetMapping("/film")
+    @GetMapping("/by-film")
     public ResponseEntity<CustomResponseWrapper<List<ReviewResponseDTO>>> getAllReviewsByFilmId(@RequestParam Long filmId) {
         List<Review> reviews = reviewService.getAllReviewsByFilmId(filmId);
         List<ReviewResponseDTO> response = reviewMapper.mapReviewToReviewResponseDTO(reviews);
         CustomResponseWrapper<List<ReviewResponseDTO>> wrapper = CustomResponseWrapper.<List<ReviewResponseDTO>>builder()
                 .status(HttpStatus.OK.value())
                 .message(String.format("List of reviews for film with ID: %s", filmId))
+                .data(response)
+                .build();
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }
+
+    @GetMapping("/by-user")
+    public ResponseEntity<CustomResponseWrapper<List<ReviewResponseDTO>>> getAllReviewsByUserId(@RequestParam Long filmId) {
+        List<Review> reviews = reviewService.getAllReviewsByUserId(filmId);
+        List<ReviewResponseDTO> response = reviewMapper.mapReviewToReviewResponseDTO(reviews);
+        CustomResponseWrapper<List<ReviewResponseDTO>> wrapper = CustomResponseWrapper.<List<ReviewResponseDTO>>builder()
+                .status(HttpStatus.OK.value())
+                .message(String.format("List of reviews for user with ID: %s", filmId))
                 .data(response)
                 .build();
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
@@ -107,8 +119,8 @@ public class ReviewController {
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<CustomResponseWrapper<String>> getAllReviews(@RequestParam Long userId, @RequestParam Long filmId) {
+    @GetMapping("/count-reviews")
+    public ResponseEntity<CustomResponseWrapper<String>> countUserReviewsForFilm(@RequestParam Long userId, @RequestParam Long filmId) {
         int response = reviewService.countUserReviewsForFilm(userId, filmId);
         CustomResponseWrapper<String> wrapper = CustomResponseWrapper.<String>builder()
                 .status(HttpStatus.OK.value())

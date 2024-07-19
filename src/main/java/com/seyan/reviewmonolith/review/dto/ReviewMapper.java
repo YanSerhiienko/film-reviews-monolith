@@ -1,7 +1,7 @@
 package com.seyan.reviewmonolith.review.dto;
 
 
-import com.seyan.reviewmonolith.film.log.dto.ActivityReviewDiaryRequest;
+import com.seyan.reviewmonolith.film.log.dto.ActivityAndReviewCreationDTO;
 import com.seyan.reviewmonolith.review.Review;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
@@ -9,7 +9,6 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Component;
 
 import java.beans.PropertyDescriptor;
-import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,7 +25,7 @@ public class ReviewMapper {
                 .content(dto.content())
                 .watchedOnDate(dto.watchedOnDate())
                 .filmId(dto.filmId())
-                .authorId(dto.authorId())
+                .userId(dto.userId())
                 .containsSpoilers(dto.containsSpoilers())
                 .watchedThisFilmBefore(dto.watchedThisFilmBefore())
                 .build();*/
@@ -34,6 +33,9 @@ public class ReviewMapper {
 
     public Review mapReviewUpdateDTOToReview(ReviewUpdateDTO source, Review destination) {
         BeanUtils.copyProperties(source, destination, getNullFieldNames(source));
+        if (source.watchedOnDate() == null) {
+            destination.setWatchedOnDate(null);
+        }
         return destination;
     }
 
@@ -48,7 +50,7 @@ public class ReviewMapper {
                 review.getContainsSpoilers(),
                 review.getCreationDate(),
                 review.getFilmId(),
-                review.getAuthorId(),
+                review.getUserId(),
                 review.getLikedUsersIds(),
                 review.getCommentIds()
         );
@@ -90,5 +92,11 @@ public class ReviewMapper {
 
         String[] result = new String[fieldNames.size()];
         return fieldNames.toArray(result);
+    }
+
+    public Review mapActivityReviewDiaryRequestToReview(ActivityAndReviewCreationDTO request) {
+        Review review = new Review();
+        BeanUtils.copyProperties(request, review, getNullFieldNames(request));
+        return review;
     }
 }

@@ -14,9 +14,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@Builder
 @AllArgsConstructor
 //@NoArgsConstructor
-@Builder
 @Entity
 @Table(name = "films")
 @DynamicUpdate
@@ -73,5 +73,12 @@ public class Film {
         this.watchedCount = 0L;
         this.listCount = 0L;
         this.likeCount = 0L;
+    }
+
+    @Override
+    public String toString() {
+        return "Film{" +
+                "id=" + id +
+                '}';
     }
 }

@@ -12,6 +12,7 @@ public record ReviewUpdateDTO(
         Boolean isLikedFilm,
         String content,
         Boolean containsSpoilers,
+        LocalDate watchedOnDate,
         Boolean watchedThisFilmBefore
 ) {
 

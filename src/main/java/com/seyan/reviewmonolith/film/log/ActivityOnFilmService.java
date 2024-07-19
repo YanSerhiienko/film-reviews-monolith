@@ -4,7 +4,7 @@ import com.seyan.reviewmonolith.exception.film.ActivityDeleteException;
 import com.seyan.reviewmonolith.exception.film.ActivityNotFoundException;
 import com.seyan.reviewmonolith.film.FilmService;
 import com.seyan.reviewmonolith.film.log.dto.ActivityOnFilmMapper;
-import com.seyan.reviewmonolith.film.log.dto.ActivityReviewDiaryRequest;
+import com.seyan.reviewmonolith.film.log.dto.ActivityAndReviewCreationDTO;
 import com.seyan.reviewmonolith.review.Review;
 import com.seyan.reviewmonolith.review.ReviewService;
 import com.seyan.reviewmonolith.review.dto.ReviewCreationDTO;
@@ -28,11 +28,11 @@ public class ActivityOnFilmService {
 
 
     //todo add external review / diary entities
-    public ActivityOnFilm createOrUpdateActivity(ActivityReviewDiaryRequest request) {
-        ActivityOnFilm activity = activityMapper.mapActivityReviewDiaryRequestToActivityOnFilm(request);
+    public ActivityOnFilm createOrUpdateActivity(ActivityAndReviewCreationDTO request) {
+        ActivityOnFilm activity = activityMapper.mapActivityAndReviewCreationDTOToActivityOnFilm(request);
 
-        if (request.reviewContent() != null) {
-            ReviewCreationDTO dto = activityMapper.mapActivityReviewDiaryRequestToReviewCreationDTO(request);
+        if (request.reviewContent() != null || request.watchedThisFilmBefore()) {
+            ReviewCreationDTO dto = activityMapper.mapActivityAndReviewCreationDTOToReviewCreationDTO(request);
             Review review = reviewService.createReview(dto);
             //activity.getFilmReviews().add(review);
             activity.setIsInWatchlist(false);
@@ -73,6 +73,7 @@ public class ActivityOnFilmService {
     }
     ////////////////////////////////////////////////
 
+    //todo make default constructor (?)
     public ActivityOnFilm getOrCreateActivityById(ActivityOnFilmId id) {
         return activityRepository.findById(id).orElseGet(() -> ActivityOnFilm.builder()
                 .id(id)
@@ -122,7 +123,7 @@ public class ActivityOnFilmService {
     }
 
     private Double getFilmAvgRating(Long filmId) {
-        return activityRepository.getFilmAvgRating(filmId);
+        return activityRepository.getFilmAvgRating(filmId).orElse(0.0);
     }
 
 

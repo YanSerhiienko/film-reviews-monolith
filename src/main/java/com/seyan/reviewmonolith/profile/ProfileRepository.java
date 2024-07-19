@@ -29,4 +29,7 @@ public interface ProfileRepository extends JpaRepository<Profile, Long> {
     Optional<Profile> findByUrl(String url);
 
     int countByUrlContaining(String url);
+
+    int countByNameContaining(String name);
+    int countByNameIgnoreCase(String name);
 }

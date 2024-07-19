@@ -4,7 +4,7 @@ import com.seyan.reviewmonolith.film.log.ActivityOnFilmId;
 
 import java.time.LocalDate;
 
-public record ActivityOnFilmResponse(
+public record ActivityOnFilmResponseDTO(
         ActivityOnFilmId id,
         Boolean isWatched,
         Boolean isLiked,

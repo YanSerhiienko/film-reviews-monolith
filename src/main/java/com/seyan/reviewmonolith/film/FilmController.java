@@ -82,7 +82,7 @@ public class FilmController {
 
     @GetMapping
     public ResponseEntity<CustomResponseWrapper<List<FilmResponseDTO>>> getAllFilms(
-            @RequestParam(required = false) Map<String, String> params, @RequestBody(required = false) Long userId) {
+            @RequestParam(required = false) Map<String, String> params, @RequestParam(required = false) Long userId) {
         List<Film> films = filmService.getAllFilmsWithParams(params, userId);
         List<FilmResponseDTO> response = filmMapper.mapFilmToFilmResponseDTO(films);
         CustomResponseWrapper<List<FilmResponseDTO>> wrapper = CustomResponseWrapper.<List<FilmResponseDTO>>builder()

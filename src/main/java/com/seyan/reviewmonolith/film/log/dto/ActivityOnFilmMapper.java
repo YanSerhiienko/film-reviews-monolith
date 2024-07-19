@@ -25,9 +25,9 @@ public class ActivityOnFilmMapper {
         return activity;
     }
 
-    public ActivityOnFilmResponse mapActivityOnFilmToActivityOnFilmResponse(ActivityOnFilm activity) {
+    public ActivityOnFilmResponseDTO mapActivityOnFilmToActivityOnFilmResponse(ActivityOnFilm activity) {
         //boolean hasReview = activity.getFilmReviews().size() > 0;
-        return new ActivityOnFilmResponse(
+        return new ActivityOnFilmResponseDTO(
                 activity.getId(),
                 activity.getIsWatched(),
                 activity.getIsLiked(),
@@ -38,7 +38,7 @@ public class ActivityOnFilmMapper {
         );
     }
 
-    public List<ActivityOnFilmResponse> mapActivityOnFilmToActivityOnFilmResponse(List<ActivityOnFilm> films) {
+    public List<ActivityOnFilmResponseDTO> mapActivityOnFilmToActivityOnFilmResponse(List<ActivityOnFilm> films) {
         if (films == null) {
             return null;
         }
@@ -87,22 +87,22 @@ public class ActivityOnFilmMapper {
         return fieldNames.toArray(result);
     }
 
-    public ActivityOnFilm mapActivityReviewDiaryRequestToActivityOnFilm(ActivityReviewDiaryRequest request) {
+    public ActivityOnFilm mapActivityAndReviewCreationDTOToActivityOnFilm(ActivityAndReviewCreationDTO dto) {
         return ActivityOnFilm.builder()
                 .id(new ActivityOnFilmId(
-                        request.userId(),
-                        request.filmId()
+                        dto.userId(),
+                        dto.filmId()
                 ))
                 .isWatched(true)
-                .isLiked(request.isLiked())
-                .rating(request.rating())
+                .isLiked(dto.isLiked())
+                .rating(dto.rating())
                 .build();
     }
 
-    public Review mapActivityReviewDiaryRequestToReview(ActivityReviewDiaryRequest request) {
+    public Review mapActivityReviewDiaryRequestToReview(ActivityAndReviewCreationDTO request) {
         return Review.builder()
                 .filmId(request.filmId())
-                .authorId(request.userId())
+                .userId(request.userId())
                 .content(request.reviewContent())
                 .rating(request.rating())
                 .isLiked(request.isLiked())
@@ -111,14 +111,16 @@ public class ActivityOnFilmMapper {
                 .build();
     }
 
-    public ReviewCreationDTO mapActivityReviewDiaryRequestToReviewCreationDTO(ActivityReviewDiaryRequest request) {
+    public ReviewCreationDTO mapActivityAndReviewCreationDTOToReviewCreationDTO(ActivityAndReviewCreationDTO dto) {
         return new ReviewCreationDTO(
-                request.rating(),
-                request.isLiked(),
-                request.reviewContent(),
-                request.containsSpoilers(),
-                request.filmId(),
-                request.userId()
+                dto.rating(),
+                dto.isLiked(),
+                dto.reviewContent(),
+                dto.containsSpoilers(),
+                dto.filmId(),
+                dto.userId(),
+                dto.watchedOnDate(),
+                dto.watchedThisFilmBefore()
         );
     }
 }
