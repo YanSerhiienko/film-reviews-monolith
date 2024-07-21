@@ -1,4 +1,4 @@
-package com.seyan.reviewmonolith.film.log;
+package com.seyan.reviewmonolith.activity;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -25,6 +25,9 @@ public interface ActivityOnFilmRepository extends JpaRepository<ActivityOnFilm, 
     @Query(value = "select * from activity_on_film where user_id = :userId and is_watched = true", nativeQuery = true)
     List<ActivityOnFilm> findWatchedFilmsActivities(@Param("userId") Long userId);
 
+    @Query(value = "select * from activity_on_film where user_id = :userId and is_in_watchlist = true", nativeQuery = true)
+    List<ActivityOnFilm> findWatchlistByUserId(@Param("userId") Long userId);
+
     @Query(value = "select * from activity_on_film where user_id = :userId and is_liked = true", nativeQuery = true)
     List<ActivityOnFilm> findLikedFilmsActivities(@Param("userId") Long userId);
 
@@ -35,6 +38,7 @@ public interface ActivityOnFilmRepository extends JpaRepository<ActivityOnFilm, 
 
     @Query(value = "select * from activity_on_film where user_id = :userId and rating > :rating", nativeQuery = true)
     List<ActivityOnFilm> findActivityByUserIdAndByRatingGreaterThan(@Param("userId") Long userId, @Param("rating") Double rating);
+
 
     //countByJobIdAndToDeleteIsTrue
 }

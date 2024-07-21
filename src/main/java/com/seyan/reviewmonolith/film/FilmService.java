@@ -6,8 +6,8 @@ import com.seyan.reviewmonolith.exception.profile.ProfileNotFoundException;
 import com.seyan.reviewmonolith.film.dto.FilmCreationDTO;
 import com.seyan.reviewmonolith.film.dto.FilmMapper;
 import com.seyan.reviewmonolith.film.dto.FilmUpdateDTO;
-import com.seyan.reviewmonolith.film.log.ActivityOnFilm;
-import com.seyan.reviewmonolith.film.log.ActivityOnFilmRepository;
+import com.seyan.reviewmonolith.activity.ActivityOnFilm;
+import com.seyan.reviewmonolith.activity.ActivityOnFilmRepository;
 import com.seyan.reviewmonolith.profile.Profile;
 import com.seyan.reviewmonolith.profile.ProfileRepository;
 import com.seyan.reviewmonolith.review.ReviewService;
@@ -90,6 +90,10 @@ public class FilmService {
     public Film getFilmById(Long id) {
         return filmRepository.findById(id).orElseThrow(() -> new FilmNotFoundException(
                 String.format("No film found with the provided ID: %s", id)));
+    }
+
+    public List<Film> getFilmsByIdList(List<Long> filmIds) {
+        return filmRepository.findAllById(filmIds);
     }
 
     public Film updateFilm(FilmUpdateDTO dto, Long id) {

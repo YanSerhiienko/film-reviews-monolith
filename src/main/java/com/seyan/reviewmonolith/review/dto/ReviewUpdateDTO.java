@@ -6,10 +6,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 public record ReviewUpdateDTO(
-        @NotNull
-        Long id,
+        //@NotNull
+        //Long id,
         Double rating,
-        Boolean isLikedFilm,
+        Boolean isLiked,
         String content,
         Boolean containsSpoilers,
         LocalDate watchedOnDate,

@@ -1,7 +1,7 @@
 package com.seyan.reviewmonolith.review.dto;
 
 
-import com.seyan.reviewmonolith.film.log.dto.ActivityAndReviewCreationDTO;
+import com.seyan.reviewmonolith.activity.dto.ActivityAndReviewCreationDTO;
 import com.seyan.reviewmonolith.review.Review;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
@@ -47,6 +47,7 @@ public class ReviewMapper {
                 review.getRating(),
                 review.getIsLiked(),
                 review.getContent(),
+                review.getWatchedOnDate(),
                 review.getContainsSpoilers(),
                 review.getCreationDate(),
                 review.getFilmId(),

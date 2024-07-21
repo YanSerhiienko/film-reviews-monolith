@@ -7,9 +7,9 @@ import java.util.Set;
 public record ReviewResponseDTO(
         Long id,
         Double rating,
-        Boolean isLikedFilm,
+        Boolean isLiked,
         String content,
-        //LocalDate watchedOnDate,
+        LocalDate watchedOnDate,
         Boolean containsSpoilers,
         LocalDate creationDate,
         Long filmId,

@@ -1,6 +1,5 @@
-package com.seyan.reviewmonolith.film.log;
+package com.seyan.reviewmonolith.activity;
 
-import com.seyan.reviewmonolith.review.Review;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +8,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Data
 @AllArgsConstructor

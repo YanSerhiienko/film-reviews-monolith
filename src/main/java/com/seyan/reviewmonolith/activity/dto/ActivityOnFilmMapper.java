@@ -1,8 +1,8 @@
-package com.seyan.reviewmonolith.film.log.dto;
+package com.seyan.reviewmonolith.activity.dto;
 
 
-import com.seyan.reviewmonolith.film.log.ActivityOnFilmId;
-import com.seyan.reviewmonolith.film.log.ActivityOnFilm;
+import com.seyan.reviewmonolith.activity.ActivityOnFilm;
+import com.seyan.reviewmonolith.activity.ActivityOnFilmId;
 import com.seyan.reviewmonolith.review.Review;
 import com.seyan.reviewmonolith.review.dto.ReviewCreationDTO;
 import org.springframework.beans.BeanUtils;
@@ -18,7 +18,7 @@ import java.util.Set;
 
 @Component
 public class ActivityOnFilmMapper {
-    //todo delete if has moo usage
+    //todo delete if has no usage
     public ActivityOnFilm mapActivityOnFilmRequestToActivityOnFilm(ActivityOnFilmRequest request) {
         ActivityOnFilm activity = new ActivityOnFilm();
         BeanUtils.copyProperties(request, activity, getNullFieldNames(request));

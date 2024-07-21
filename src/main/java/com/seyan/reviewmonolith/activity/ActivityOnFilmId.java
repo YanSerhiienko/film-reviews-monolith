@@ -1,4 +1,4 @@
-package com.seyan.reviewmonolith.film.log;
+package com.seyan.reviewmonolith.activity;
 
 import jakarta.persistence.Embeddable;
 import lombok.*;

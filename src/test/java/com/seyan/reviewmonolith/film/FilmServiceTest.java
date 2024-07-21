@@ -1,7 +1,7 @@
 package com.seyan.reviewmonolith.film;
 
 import com.seyan.reviewmonolith.film.dto.FilmMapper;
-import com.seyan.reviewmonolith.film.log.ActivityOnFilmRepository;
+import com.seyan.reviewmonolith.activity.ActivityOnFilmRepository;
 import com.seyan.reviewmonolith.profile.ProfileRepository;
 import com.seyan.reviewmonolith.review.ReviewService;
 import org.junit.jupiter.api.Test;

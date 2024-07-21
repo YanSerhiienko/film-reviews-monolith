@@ -1,4 +1,4 @@
-package com.seyan.reviewmonolith.film.log.dto;
+package com.seyan.reviewmonolith.activity.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Max;

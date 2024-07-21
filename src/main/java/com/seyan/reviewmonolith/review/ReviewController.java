@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/reviews")
+@RequestMapping("/api/v1")
 @RestController
 public class ReviewController {
     private final ReviewService reviewService;
@@ -33,7 +33,7 @@ public class ReviewController {
         return new ResponseEntity<>(wrapper, HttpStatus.CREATED);
     }*/
 
-    @PostMapping("/create")
+    @PostMapping("/reviews/create")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<CustomResponseWrapper<ReviewResponseDTO>> createReview(@RequestBody @Valid ReviewCreationDTO dto) {
         Review review = reviewService.createReview(dto);
@@ -46,9 +46,9 @@ public class ReviewController {
         return new ResponseEntity<>(wrapper, HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{id}/update")
-    public ResponseEntity<CustomResponseWrapper<ReviewResponseDTO>> updateReview(@RequestBody @Valid ReviewUpdateDTO dto) {
-        Review review = reviewService.updateReview(dto);
+    @PatchMapping("/reviews/{id}/update")
+    public ResponseEntity<CustomResponseWrapper<ReviewResponseDTO>> updateReview(@PathVariable("id") Long reviewId, @RequestBody @Valid ReviewUpdateDTO dto) {
+        Review review = reviewService.updateReview(reviewId, dto);
         ReviewResponseDTO response = reviewMapper.mapReviewToReviewResponseDTO(review);
         CustomResponseWrapper<ReviewResponseDTO> wrapper = CustomResponseWrapper.<ReviewResponseDTO>builder()
                 .status(HttpStatus.OK.value())
@@ -58,12 +58,12 @@ public class ReviewController {
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/reviews/{id}/delete")
     public ResponseEntity<CustomResponseWrapper<ReviewResponseDTO>> deleteReview(@PathVariable("id") Long reviewId) {
         reviewService.deleteReview(reviewId);
         CustomResponseWrapper<ReviewResponseDTO> wrapper = CustomResponseWrapper.<ReviewResponseDTO>builder()
                 .status(HttpStatus.OK.value())
-                .message("User has been deleted")
+                .message("Review has been deleted")
                 .data(null)
                 .build();
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
@@ -71,7 +71,7 @@ public class ReviewController {
 
 
     //todo /username/films/review (?)
-    @GetMapping("/{id}")
+    @GetMapping("/reviews/{id}")
     public ResponseEntity<CustomResponseWrapper<ReviewResponseDTO>> reviewDetails(@PathVariable("id") Long reviewId) {
         Review review = reviewService.getReviewById(reviewId);
         ReviewResponseDTO response = reviewMapper.mapReviewToReviewResponseDTO(review);
@@ -83,7 +83,7 @@ public class ReviewController {
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
     }
 
-    @GetMapping("/by-film")
+    @GetMapping("/reviews/by-film")
     public ResponseEntity<CustomResponseWrapper<List<ReviewResponseDTO>>> getAllReviewsByFilmId(@RequestParam Long filmId) {
         List<Review> reviews = reviewService.getAllReviewsByFilmId(filmId);
         List<ReviewResponseDTO> response = reviewMapper.mapReviewToReviewResponseDTO(reviews);
@@ -95,13 +95,25 @@ public class ReviewController {
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
     }
 
-    @GetMapping("/by-user")
-    public ResponseEntity<CustomResponseWrapper<List<ReviewResponseDTO>>> getAllReviewsByUserId(@RequestParam Long filmId) {
-        List<Review> reviews = reviewService.getAllReviewsByUserId(filmId);
+    @GetMapping("/{userId}/films/reviews")
+    public ResponseEntity<CustomResponseWrapper<List<ReviewResponseDTO>>> getAllReviewsByUserId(@PathVariable("userId") Long userId) {
+        List<Review> reviews = reviewService.getAllReviewsByUserId(userId);
         List<ReviewResponseDTO> response = reviewMapper.mapReviewToReviewResponseDTO(reviews);
         CustomResponseWrapper<List<ReviewResponseDTO>> wrapper = CustomResponseWrapper.<List<ReviewResponseDTO>>builder()
                 .status(HttpStatus.OK.value())
-                .message(String.format("List of reviews for user with ID: %s", filmId))
+                .message(String.format("List of reviews for user with ID: %s", userId))
+                .data(response)
+                .build();
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/films/diary")
+    public ResponseEntity<CustomResponseWrapper<List<ReviewResponseDTO>>> getDiary(@PathVariable("userId") Long userId) {
+        List<Review> reviews = reviewService.getAllReviewsByUserIdAsDiary(userId);
+        List<ReviewResponseDTO> response = reviewMapper.mapReviewToReviewResponseDTO(reviews);
+        CustomResponseWrapper<List<ReviewResponseDTO>> wrapper = CustomResponseWrapper.<List<ReviewResponseDTO>>builder()
+                .status(HttpStatus.OK.value())
+                .message(String.format("Diary films of user with ID: %s", userId))
                 .data(response)
                 .build();
         return new ResponseEntity<>(wrapper, HttpStatus.OK);

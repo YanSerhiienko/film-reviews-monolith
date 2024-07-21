@@ -1,6 +1,6 @@
-package com.seyan.reviewmonolith.film.log.dto;
+package com.seyan.reviewmonolith.activity.dto;
 
-import com.seyan.reviewmonolith.film.log.ActivityOnFilmId;
+import com.seyan.reviewmonolith.activity.ActivityOnFilmId;
 
 import java.time.LocalDate;
 

@@ -25,7 +25,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query(value = "select film_id from reviews", nativeQuery = true)
     List<Long> findAllFilmIds();
 
-    List<Review> findByUserId(Long userId);
+    List<Review> findByUserIdAndContentNotNull(Long userId);
 
     List<Review> findByUserIdAndWatchedOnDateNotNull(Long userId);
 }

@@ -1,8 +1,8 @@
-package com.seyan.reviewmonolith.film.log;
+package com.seyan.reviewmonolith.activity;
 
-import com.seyan.reviewmonolith.film.log.dto.ActivityOnFilmMapper;
-import com.seyan.reviewmonolith.film.log.dto.ActivityOnFilmResponseDTO;
-import com.seyan.reviewmonolith.film.log.dto.ActivityAndReviewCreationDTO;
+import com.seyan.reviewmonolith.activity.dto.ActivityOnFilmMapper;
+import com.seyan.reviewmonolith.activity.dto.ActivityOnFilmResponseDTO;
+import com.seyan.reviewmonolith.activity.dto.ActivityAndReviewCreationDTO;
 import com.seyan.reviewmonolith.responseWrapper.CustomResponseWrapper;
 import com.seyan.reviewmonolith.user.UserService;
 import jakarta.validation.Valid;
@@ -33,6 +33,30 @@ public class ActivityOnFilmController {
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
     }*/
 
+    @GetMapping("/activity/all")
+    public ResponseEntity<CustomResponseWrapper<List<ActivityOnFilmResponseDTO>>> getAllActivities() {
+        List<ActivityOnFilm> activityList = activityService.getAllActivities();
+        List<ActivityOnFilmResponseDTO> response = activityMapper.mapActivityOnFilmToActivityOnFilmResponse(activityList);
+        CustomResponseWrapper<List<ActivityOnFilmResponseDTO>> wrapper = CustomResponseWrapper.<List<ActivityOnFilmResponseDTO>>builder()
+                .status(HttpStatus.OK.value())
+                .message("All activities")
+                .data(response)
+                .build();
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/activity")
+    public ResponseEntity<CustomResponseWrapper<List<ActivityOnFilmResponseDTO>>> getAllActivitiesByUserId(@PathVariable("userId") Long userId) {
+        List<ActivityOnFilm> activityList = activityService.getAllActivitiesByUserId(userId);
+        List<ActivityOnFilmResponseDTO> response = activityMapper.mapActivityOnFilmToActivityOnFilmResponse(activityList);
+        CustomResponseWrapper<List<ActivityOnFilmResponseDTO>> wrapper = CustomResponseWrapper.<List<ActivityOnFilmResponseDTO>>builder()
+                .status(HttpStatus.OK.value())
+                .message(String.format("All activities of user with ID: %s", userId))
+                .data(response)
+                .build();
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }
+
     @PostMapping("/activity/create-update")
     public ResponseEntity<CustomResponseWrapper<ActivityOnFilmResponseDTO>> createOrUpdateActivity(@RequestBody @Valid ActivityAndReviewCreationDTO request) {
         ActivityOnFilm activity = activityService.createOrUpdateActivity(request);
@@ -45,8 +69,8 @@ public class ActivityOnFilmController {
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}/films/")
-    public ResponseEntity<CustomResponseWrapper<List<ActivityOnFilmResponseDTO>>> getWatchedFilmsActivities(@PathVariable("id") Long userId) {
+    @GetMapping("/{userId}/films")
+    public ResponseEntity<CustomResponseWrapper<List<ActivityOnFilmResponseDTO>>> getWatchedFilmsActivities(@PathVariable("userId") Long userId) {
         List<ActivityOnFilm> activityList = activityService.getWatchedFilmsActivities(userId);
         List<ActivityOnFilmResponseDTO> response = activityMapper.mapActivityOnFilmToActivityOnFilmResponse(activityList);
         CustomResponseWrapper<List<ActivityOnFilmResponseDTO>> wrapper = CustomResponseWrapper.<List<ActivityOnFilmResponseDTO>>builder()
@@ -57,8 +81,20 @@ public class ActivityOnFilmController {
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}/films/liked")
-    public ResponseEntity<CustomResponseWrapper<List<ActivityOnFilmResponseDTO>>> getLikedFilmsActivities(@PathVariable("id") Long userId) {
+    @GetMapping("/{userId}/watchlist")
+    public ResponseEntity<CustomResponseWrapper<List<ActivityOnFilmResponseDTO>>> getWatchlist(@PathVariable("userId") Long userId) {
+        List<ActivityOnFilm> activityList = activityService.getWatchlist(userId);
+        List<ActivityOnFilmResponseDTO> response = activityMapper.mapActivityOnFilmToActivityOnFilmResponse(activityList);
+        CustomResponseWrapper<List<ActivityOnFilmResponseDTO>> wrapper = CustomResponseWrapper.<List<ActivityOnFilmResponseDTO>>builder()
+                .status(HttpStatus.OK.value())
+                .message(String.format("Watchlist of user with ID: %s", userId))
+                .data(response)
+                .build();
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }
+
+    @GetMapping("/{userId}/likes/films")
+    public ResponseEntity<CustomResponseWrapper<List<ActivityOnFilmResponseDTO>>> getLikedFilmsActivities(@PathVariable("userId") Long userId) {
         List<ActivityOnFilm> activityList = activityService.getLikedFilmsActivities(userId);
         List<ActivityOnFilmResponseDTO> response = activityMapper.mapActivityOnFilmToActivityOnFilmResponse(activityList);
         CustomResponseWrapper<List<ActivityOnFilmResponseDTO>> wrapper = CustomResponseWrapper.<List<ActivityOnFilmResponseDTO>>builder()
@@ -69,7 +105,7 @@ public class ActivityOnFilmController {
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
     }
 
-    @GetMapping("/activity/create-update")
+    @GetMapping("/activity")
     public ResponseEntity<CustomResponseWrapper<ActivityOnFilmResponseDTO>> getFilmActivity(@RequestParam("userId") Long userId, @RequestParam("filmId") Long filmId) {
         ActivityOnFilm activity = activityService.getOrCreateActivityById(new ActivityOnFilmId(userId, filmId));
         ActivityOnFilmResponseDTO response = activityMapper.mapActivityOnFilmToActivityOnFilmResponse(activity);

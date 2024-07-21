@@ -8,7 +8,7 @@ public record ReviewCreationDTO(
         //@NotNull
         Double rating,
         //@NotNull
-        Boolean isLikedFilm,
+        Boolean isLiked,
         //@NotNull
         String content,
         Boolean containsSpoilers,
