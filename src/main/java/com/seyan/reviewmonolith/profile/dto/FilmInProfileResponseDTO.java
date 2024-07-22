@@ -1,4 +1,4 @@
-package com.seyan.reviewmonolith.film.dto;
+package com.seyan.reviewmonolith.profile.dto;
 
 public record FilmInProfileResponseDTO(
         Long id,

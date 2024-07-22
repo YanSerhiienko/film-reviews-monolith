@@ -39,9 +39,9 @@ public interface FilmRepository extends JpaRepository<Film, Long> {
     //Your Rating
     //findByInventoryIdIn(List<Long> inventoryIdList);
 
-    //List<Film> findByOrderByIdAndRatingDescIn(List<Long> filmIds); //Highest First
-   // List<Film> findByIdByOrderByRatingDescIn(List<Long> filmIds); //Highest First
-    //List<Film> findByOrderByIdAndRatingAscIn(List<Long> filmIds); //Lowest First
+    //List<Film> findByOrderByIdAndRatingDescIn(List<Long> films); //Highest First
+   // List<Film> findByIdByOrderByRatingDescIn(List<Long> films); //Highest First
+    //List<Film> findByOrderByIdAndRatingAscIn(List<Long> films); //Lowest First
 
 //    Your Interests
 //    Based on films you liked

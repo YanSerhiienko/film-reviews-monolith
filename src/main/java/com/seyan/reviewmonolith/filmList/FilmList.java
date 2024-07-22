@@ -6,10 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 @Data
 @AllArgsConstructor
@@ -29,7 +27,9 @@ public class FilmList {
     private Long likeCount;
     private Long commentCount;
     //private HashSet<Long> commentIds;
-    private LinkedHashSet<Long> filmIds;
+    private Map<Integer, Long> filmIds;
+    private LocalDate creationDate;
+    private LocalDate lastUpdateDate;
     //todo you watched method
 
     public FilmList() {

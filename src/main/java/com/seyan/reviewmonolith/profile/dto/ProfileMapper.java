@@ -2,7 +2,6 @@ package com.seyan.reviewmonolith.profile.dto;
 
 
 import com.seyan.reviewmonolith.film.Film;
-import com.seyan.reviewmonolith.film.dto.FilmInProfileResponseDTO;
 import com.seyan.reviewmonolith.profile.Profile;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;

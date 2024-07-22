@@ -12,20 +12,12 @@ public record ReviewCreationDTO(
         //@NotNull
         String content,
         Boolean containsSpoilers,
-
-        //todo fix format
-        //@JsonFormat(pattern =
-        // "yyyy-MM-dd")
-        //@NotNull
-        @NotNull
+        @NotNull(message = "Film id should not be null")
         Long filmId,
-        @NotNull
+        @NotNull(message = "User id should not be null")
         Long userId,
-
         LocalDate watchedOnDate,
         Boolean watchedThisFilmBefore
-
-
 ) {
 
 }

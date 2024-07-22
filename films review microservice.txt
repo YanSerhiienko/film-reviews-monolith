@@ -17,10 +17,6 @@ api/film/title
 /films/decade/2020s/genre/action/by/release/
 
 
-
-
-
-
 api/username
 api/username/films(watched)
 api/username/films/diary
@@ -199,3 +195,42 @@ Opening Soon (US)
 Film Name (A–Z)
 Collections
 Countries / Languages
+
+
+LIST ORDER
+List Order
+Reverse Order
+Film Name
+Film Popularity
+Shuffle
+DATES
+When Added
+Newest First
+Earliest First
+Release Date
+Newest First
+Earliest First
+Your Diary Date
+Newest First
+Earliest First
+RATINGS
+Average Rating
+Highest First
+Lowest First
+Your Rating
+Highest First
+Lowest First
+OWNER
+Cire’s Diary Date
+Newest First
+Earliest First
+Cire’s Rating
+Highest First
+Lowest First
+OTHER
+Your Interests
+Based on films you liked
+Related to films you liked
+Film Length
+Shortest First
+Longest First

@@ -1,7 +1,6 @@
 package com.seyan.reviewmonolith.film.dto;
 
 import com.seyan.reviewmonolith.film.Genre;
-import com.seyan.reviewmonolith.profile.dto.ProfileInFilmResponseDTO;
 
 import java.time.LocalDate;
 import java.util.List;

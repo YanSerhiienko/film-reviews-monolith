@@ -1,16 +1,21 @@
 package com.seyan.reviewmonolith.filmList.dto;
 
-import java.util.LinkedHashSet;
+import com.seyan.reviewmonolith.filmList.Privacy;
+import lombok.Builder;
+import lombok.Data;
+
 import java.util.List;
+import java.util.Map;
 
-public record FilmListResponseDTO(
-        Long id,
-        Long userId,
-        String title,
-        String description,
-        Long likeCount,
-        Long commentCount,
-        List<FilmInFilmListResponseDTO> filmIds
-) {
-
+@Data
+@Builder
+public class FilmListResponseDTO {
+    Long id;
+    Long userId;
+    String title;
+    String description;
+    Privacy privacy;
+    Long likeCount;
+    Long commentCount;
+    List<FilmInFilmListResponseDTO> films;
 }

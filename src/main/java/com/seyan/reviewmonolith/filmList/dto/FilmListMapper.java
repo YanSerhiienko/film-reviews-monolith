@@ -31,9 +31,10 @@ public class FilmListMapper {
                 filmList.getUserId(),
                 filmList.getTitle(),
                 filmList.getDescription(),
+                filmList.getPrivacy(),
                 filmList.getLikeCount(),
                 filmList.getCommentCount(),
-                Collections.emptyList()
+                Collections.emptyMap()
                 //filmsResponse
         );
     }
@@ -48,14 +49,14 @@ public class FilmListMapper {
                 .toList();
     }
 
-    private FilmInFilmListResponseDTO mapFilmToFilmInFilmListResponseDTO(Film film) {
+    public FilmInFilmListResponseDTO mapFilmToFilmInFilmListResponseDTO(Film film) {
         if (film == null) {
             return null;
         }
         return new FilmInFilmListResponseDTO(film.getId(), film.getTitle(), film.getUrl());
     }
 
-    private List<FilmInFilmListResponseDTO> mapFilmToFilmInFilmListResponseDTO(List<Film> films) {
+    public List<FilmInFilmListResponseDTO> mapFilmToFilmInFilmListResponseDTO(List<Film> films) {
         if (films == null) {
             return null;
         }
