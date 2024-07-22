@@ -3,12 +3,15 @@ package com.seyan.reviewmonolith.filmList.dto;
 
 import com.seyan.reviewmonolith.film.Film;
 import com.seyan.reviewmonolith.filmList.FilmList;
+import com.seyan.reviewmonolith.filmList.ListEntry;
+import com.seyan.reviewmonolith.filmList.ListEntryId;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.stereotype.Component;
 
 import java.beans.PropertyDescriptor;
+import java.time.LocalDate;
 import java.util.*;
 
 @Component
@@ -17,6 +20,38 @@ public class FilmListMapper {
         FilmList filmList = new FilmList();
         BeanUtils.copyProperties(dto, filmList, getNullFieldNames(dto));
         return filmList;
+    }
+
+    public List<Long> mapListEntriesToFilmIds(List<ListEntry> filmEntries) {
+        if (filmEntries == null) {
+            return null;
+        }
+
+        return filmEntries.stream()
+                .map(it -> it.getId().getFilmId())
+                .toList();
+    }
+
+    public List<ListEntry> mapFilmIdsToListEntries(Long listId, List<Long> filmIds, LocalDate date) {
+        if (filmIds == null) {
+            return null;
+        }
+
+        List<ListEntryId> listEntryIds = mapFilmIdToListEntryId(listId, filmIds);
+
+        return listEntryIds.stream()
+                .map(it -> new ListEntry(it, date))
+                .toList();
+    }
+
+    private List<ListEntryId> mapFilmIdToListEntryId(Long listId, List<Long> filmIds) {
+        if (filmIds == null) {
+            return null;
+        }
+
+        return filmIds.stream()
+                .map(it -> new ListEntryId(listId, it))
+                .toList();
     }
 
     public FilmList mapFlmListUpdateDTOToFilmList(FilmListUpdateDTO source, FilmList destination) {
@@ -34,7 +69,7 @@ public class FilmListMapper {
                 filmList.getPrivacy(),
                 filmList.getLikeCount(),
                 filmList.getCommentCount(),
-                Collections.emptyMap()
+                Collections.emptyList()
                 //filmsResponse
         );
     }

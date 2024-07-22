@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -27,7 +26,9 @@ public class FilmList {
     private Long likeCount;
     private Long commentCount;
     //private HashSet<Long> commentIds;
-    private Map<Integer, Long> filmIds;
+    //private Map<Integer, ListEntry> filmIds;
+    @OrderColumn
+    List<ListEntry> filmEntries;
     private LocalDate creationDate;
     private LocalDate lastUpdateDate;
     //todo you watched method

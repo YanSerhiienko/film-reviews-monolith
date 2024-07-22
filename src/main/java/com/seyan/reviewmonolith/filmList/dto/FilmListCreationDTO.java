@@ -16,7 +16,7 @@ public record FilmListCreationDTO(
         @NotNull(message = "Privacy should not be null")
         Privacy privacy,
         @NotNull(message = "A list must include at least one film")
-        Map<Integer, Long> filmIds
+        List<Long> filmIds
 ) {
 
 }
