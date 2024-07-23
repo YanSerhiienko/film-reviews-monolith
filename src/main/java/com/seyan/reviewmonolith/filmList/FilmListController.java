@@ -1,9 +1,6 @@
 package com.seyan.reviewmonolith.filmList;
 
-import com.seyan.reviewmonolith.filmList.dto.FilmInFilmListResponseDTO;
-import com.seyan.reviewmonolith.filmList.dto.FilmListCreationDTO;
-import com.seyan.reviewmonolith.filmList.dto.FilmListMapper;
-import com.seyan.reviewmonolith.filmList.dto.FilmListResponseDTO;
+import com.seyan.reviewmonolith.filmList.dto.*;
 import com.seyan.reviewmonolith.responseWrapper.CustomResponseWrapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,17 +38,23 @@ public class FilmListController {
 
     //todo /username/list/listname/edit/
 
-    /*@PatchMapping("/lists/{id}/update")
-    public ResponseEntity<CustomResponseWrapper<FilmListResponseDTO>> updateFilmList(@RequestBody @Valid UserUpdateDTO dto, @PathVariable("id") long id) {
-        User user = userService.updateUser(dto, id);
-        UserResponseDTO response = userMapper.mapUserToUserResponseDTO(user);
-        CustomResponseWrapper<UserResponseDTO> wrapper = CustomResponseWrapper.<UserResponseDTO>builder()
+    @PatchMapping("/lists/{id}/update")
+    public ResponseEntity<CustomResponseWrapper<FilmListResponseDTO>> updateFilmList(@RequestBody @Valid FilmListUpdateDTO dto, @PathVariable("id") Long id) {
+        FilmList list = filmListService.updateFilmList(dto, id);
+        List<Long> filmIds = list.getEntries().values().stream().map(it -> it.getFilmId()).toList();
+        List<FilmInFilmListResponseDTO> films = filmListService.getFilmsFromList(filmIds);
+
+        FilmListResponseDTO response = filmListMapper.mapFilmListToFilmListResponseDTO(list);
+        response.setFilms(films);
+
+        CustomResponseWrapper<FilmListResponseDTO> wrapper = CustomResponseWrapper.<FilmListResponseDTO>builder()
                 .status(HttpStatus.OK.value())
-                .message("User has been updated")
+                .message("List has been successfully updated")
                 .data(response)
                 .build();
+
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
-    }*/
+    }
 
     /*@DeleteMapping("/lists/{id}/delete")
     public ResponseEntity<CustomResponseWrapper<UserResponseDTO>> deleteFilmList(@PathVariable("id") Long userId) {
@@ -110,14 +113,15 @@ public class FilmListController {
     public ResponseEntity<CustomResponseWrapper<FilmListResponseDTO>> getListById(@PathVariable("listId") Long listId) {
 
         FilmList list = filmListService.getListById(listId);
-        List<Long> filmIds = filmListMapper.mapListEntriesToFilmIds(list.filmEntries);
+        List<ListEntry> entries = list.getEntries().values().stream().toList();
+        List<Long> filmIds = filmListMapper.mapListEntriesToFilmIds(entries);
         List<FilmInFilmListResponseDTO> films = filmListService.getFilmsFromList(filmIds);
 
         FilmListResponseDTO response = filmListMapper.mapFilmListToFilmListResponseDTO(list);
         response.setFilms(films);
 
         CustomResponseWrapper<FilmListResponseDTO> wrapper = CustomResponseWrapper.<FilmListResponseDTO>builder()
-                .status(HttpStatus.CREATED.value())
+                .status(HttpStatus.OK.value())
                 .message(String.format("List details by ID: %s", listId))
                 .data(response)
                 .build();

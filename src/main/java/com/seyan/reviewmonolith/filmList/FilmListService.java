@@ -32,13 +32,77 @@ public class FilmListService {
         FilmList mapped = filmListMapper.mapFilmListCreationDTOToFilmList(dto);
         FilmList saved = filmListRepository.save(mapped);
 
-        List<ListEntry> listEntries = filmListMapper.mapFilmIdsToListEntries(saved.getId(), dto.filmIds(), creationDate);
+        List<ListEntry> listEntries = mapListUniqueEntries(saved.getId(), dto.filmIds(), creationDate);
+        Map<Integer, ListEntry> orderedEntries = filmListMapper.mapListEntriesToOrderedMap(listEntries);
 
-        saved.setFilmEntries(listEntries);
+        saved.setEntries(orderedEntries);
         saved.setCreationDate(creationDate);
         saved.setLastUpdateDate(creationDate);
 
         return filmListRepository.save(saved);
+    }
+
+
+    /*public FilmList createList(FilmListCreationDTO dto) {
+        LocalDate creationDate = LocalDate.now();
+
+        FilmList mapped = filmListMapper.mapFilmListCreationDTOToFilmList(dto);
+        mapped.setCreationDate(creationDate);
+
+        List<ListEntry> listEntries = mapListUniqueEntries(dto.filmIds(), creationDate);
+
+        mapped.setEntries(listEntries);
+
+        return filmListRepository.save(mapped);
+    }*/
+
+    private List<ListEntry> mapListUniqueEntries(Long listId, List<Long> filmIds, LocalDate addDate) {
+        List<Long> filmIdsUnique = filmIds.stream().distinct().toList();
+        return filmListMapper.mapFilmIdsToListEntries(listId, filmIdsUnique, addDate);
+    }
+
+    /*private List<ListEntry> mapListUniqueEntries(List<Long> filmIds, LocalDate addDate) {
+        List<Long> filmIdsUnique = filmIds.stream().distinct().toList();
+        return filmListMapper.mapFilmIdsToListEntries(filmIdsUnique, addDate);
+    }*/
+
+
+    //todo add checks for if present and unique/ordering
+    @Transactional
+    public FilmList updateFilmList(FilmListUpdateDTO dto, Long id) {
+        FilmList list = filmListRepository.findById(id).orElseThrow(() -> new FilmListNotFoundException(
+                String.format("Cannot update film list:: No list found with the provided ID: %s", id)
+        ));
+        System.out.println("list.toString() = " + list.toString());
+
+        LocalDate updateDate = LocalDate.now();
+        FilmList mapped = filmListMapper.mapFlmListUpdateDTOToFilmList(dto, list);
+        mapped.setLastUpdateDate(updateDate);
+
+        if (dto.filmIds() != null) {
+            filmListRepository.clearListEntriesRelationBeforeUpdate(list.getId());
+            filmListRepository.clearEntriesBeforeUpdate(list.getId());
+            List<Long> filmIdsUpdate = dto.filmIds().stream().distinct().toList();
+
+            List<ListEntry> presentEntries = list.getEntries().values().stream().filter(it -> filmIdsUpdate.contains(it.getFilmId())).toList();
+            System.out.println("presentEntries = " + presentEntries);
+            List<Long> presentFilmIds = presentEntries.stream().map(it -> it.getFilmId()).toList();
+
+            List<Long> newFilmIds = filmIdsUpdate.stream().filter(it -> !presentFilmIds.contains(it)).toList();
+            List<ListEntry> newEntries = mapListUniqueEntries(list.getId(), newFilmIds, updateDate);
+            System.out.println("newEntries = " + newEntries);
+
+            List<ListEntry> updatedEntries = Stream.concat(presentEntries.stream(), newEntries.stream())
+                    .sorted(Comparator.comparing(it -> filmIdsUpdate.indexOf(it.getFilmId()))).toList();
+
+            Map<Integer, ListEntry> orderedUpdatedEntries = filmListMapper.mapListEntriesToOrderedMap(updatedEntries);
+
+            mapped.setEntries(orderedUpdatedEntries);
+            System.out.println("orderedUpdatedEntries = " + orderedUpdatedEntries);
+        }
+
+        return filmListRepository.save(mapped);
+        //return filmListRepository.save(list);
     }
 
     public FilmList getListById(Long id) {
@@ -48,12 +112,11 @@ public class FilmListService {
     }
 
     //todo add you watched % of list
-
     //todo Popularity All Time This Week This Month This Year
+
     public List<FilmList> getAllFilmLists() {
         return filmListRepository.findAll();
     }
-
     //todo filter by privacy
     //WHEN UPDATED
     //List Name
@@ -65,19 +128,9 @@ public class FilmListService {
     //When Created
     //Newest First
     //Oldest First
+
     public List<FilmList> getAllFilmListsByUserId(Long userId) {
         return filmListRepository.findByUserId(userId);
-    }
-
-    public FilmList updateFilmList(FilmListUpdateDTO dto, Long id) {
-        FilmList list = filmListRepository.findById(id).orElseThrow(() -> new FilmListNotFoundException(
-                String.format("Cannot update film list:: No list found with the provided ID: %s", id)
-        ));
-
-        FilmList mapped = filmListMapper.mapFlmListUpdateDTOToFilmList(dto, list);
-        mapped.setLastUpdateDate(LocalDate.now());
-
-        return filmListRepository.save(mapped);
     }
 
     public void deleteFilmList(Long id) {

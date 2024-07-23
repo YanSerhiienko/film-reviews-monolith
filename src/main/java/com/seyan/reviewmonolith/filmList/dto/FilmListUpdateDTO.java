@@ -7,12 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 public record FilmListUpdateDTO(
-        //@NotNull
-        //Long id,
-        //Long userId,
         String title,
         String description,
         Privacy privacy,
-        Map<Integer, Long> filmIds
+        List<Long> filmIds
 ) {
 }
