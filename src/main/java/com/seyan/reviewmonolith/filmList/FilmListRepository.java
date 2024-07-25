@@ -23,4 +23,6 @@ public interface FilmListRepository extends JpaRepository<FilmList, Long> {
 
     /*@Query("DELETE rsh,rs from RoamingStatusHistory rsh inner join RoamingStatus rs on rsh.msisdn = rs.msisdn where TIMEDIFF(NOW(),rsh.createdDate)>'00:00:30'",
             nativeQuery = true)*/
+
+
 }

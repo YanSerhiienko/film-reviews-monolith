@@ -1,6 +1,8 @@
 package com.seyan.reviewmonolith.filmList;
 
 import com.seyan.reviewmonolith.filmList.dto.*;
+import com.seyan.reviewmonolith.filmList.entry.ListEntry;
+import com.seyan.reviewmonolith.filmList.entry.ListEntryRepository;
 import com.seyan.reviewmonolith.responseWrapper.CustomResponseWrapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -16,6 +19,7 @@ import java.util.List;
 public class FilmListController {
     private final FilmListService filmListService;
     private final FilmListMapper filmListMapper;
+    private final ListEntryRepository entryRepository;
 
     @PostMapping("/lists/create")
     @ResponseStatus(HttpStatus.CREATED)
@@ -41,7 +45,8 @@ public class FilmListController {
     @PatchMapping("/lists/{id}/update")
     public ResponseEntity<CustomResponseWrapper<FilmListResponseDTO>> updateFilmList(@RequestBody @Valid FilmListUpdateDTO dto, @PathVariable("id") Long id) {
         FilmList list = filmListService.updateFilmList(dto, id);
-        List<Long> filmIds = list.getEntries().values().stream().map(it -> it.getFilmId()).toList();
+        //List<Long> filmIds = list.getFilmIds().stream().map(it -> it.getFilmId()).toList();
+        List<Long> filmIds = entryRepository.findByListId(list.getId()).stream().sorted(Comparator.comparing(ListEntry::getEntryOrder)).map(ListEntry::getFilmId).toList();
         List<FilmInFilmListResponseDTO> films = filmListService.getFilmsFromList(filmIds);
 
         FilmListResponseDTO response = filmListMapper.mapFilmListToFilmListResponseDTO(list);
@@ -50,6 +55,29 @@ public class FilmListController {
         CustomResponseWrapper<FilmListResponseDTO> wrapper = CustomResponseWrapper.<FilmListResponseDTO>builder()
                 .status(HttpStatus.OK.value())
                 .message("List has been successfully updated")
+                .data(response)
+                .build();
+
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }
+
+    @GetMapping("/lists/{listId}")
+    public ResponseEntity<CustomResponseWrapper<FilmListResponseDTO>> getListById(@PathVariable("listId") Long listId) {
+
+        FilmList list = filmListService.getListById(listId);
+        System.out.println("list = " + list);
+        /*List<ListEntry> entries = list.getFilmIds().stream().toList();
+        List<Long> filmIds = filmListMapper.mapListEntriesToFilmIds(entries);*/
+        List<Long> filmIds = entryRepository.findByListId(list.getId()).stream().sorted(Comparator.comparing(ListEntry::getEntryOrder)).map(ListEntry::getFilmId).toList();
+        System.out.println("filmIds = " + filmIds);
+        List<FilmInFilmListResponseDTO> films = filmListService.getFilmsFromList(filmIds);
+
+        FilmListResponseDTO response = filmListMapper.mapFilmListToFilmListResponseDTO(list);
+        response.setFilms(films);
+
+        CustomResponseWrapper<FilmListResponseDTO> wrapper = CustomResponseWrapper.<FilmListResponseDTO>builder()
+                .status(HttpStatus.OK.value())
+                .message(String.format("List details by ID: %s", listId))
                 .data(response)
                 .build();
 
@@ -109,23 +137,5 @@ public class FilmListController {
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
     }*/
 
-    @GetMapping("/lists/{listId}")
-    public ResponseEntity<CustomResponseWrapper<FilmListResponseDTO>> getListById(@PathVariable("listId") Long listId) {
 
-        FilmList list = filmListService.getListById(listId);
-        List<ListEntry> entries = list.getEntries().values().stream().toList();
-        List<Long> filmIds = filmListMapper.mapListEntriesToFilmIds(entries);
-        List<FilmInFilmListResponseDTO> films = filmListService.getFilmsFromList(filmIds);
-
-        FilmListResponseDTO response = filmListMapper.mapFilmListToFilmListResponseDTO(list);
-        response.setFilms(films);
-
-        CustomResponseWrapper<FilmListResponseDTO> wrapper = CustomResponseWrapper.<FilmListResponseDTO>builder()
-                .status(HttpStatus.OK.value())
-                .message(String.format("List details by ID: %s", listId))
-                .data(response)
-                .build();
-
-        return new ResponseEntity<>(wrapper, HttpStatus.OK);
-    }
 }

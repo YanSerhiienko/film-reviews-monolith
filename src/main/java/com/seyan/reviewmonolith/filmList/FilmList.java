@@ -1,8 +1,8 @@
 package com.seyan.reviewmonolith.filmList;
 
+import com.seyan.reviewmonolith.filmList.entry.ListEntry;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 import org.hibernate.annotations.DynamicUpdate;
@@ -29,17 +29,25 @@ public class FilmList {
     private Privacy privacy;
     private Long likeCount;
     private Long commentCount;
+
+    @OneToMany(cascade=CascadeType.ALL)
+    @JoinColumn(name = "list_id", referencedColumnName = "id")
+    private List<ListEntry> filmIds = new ArrayList<>();
+
     //private HashSet<Long> commentIds;
     //private Map<Integer, ListEntry> filmIds;
 
-    /*@Builder.Default
-    @OrderColumn(updatable = true)
+    //@Builder.Default
+    //@OrderColumn()
+/*    @JoinColumn(name = "list_id", referencedColumnName = "id")
     @OneToMany(cascade=CascadeType.ALL)
-    private List<ListEntry> entries = new ArrayList<>();*/
+    private List<ListEntry> filmIds = new ArrayList<>();*/
 
-    @OneToMany(cascade=CascadeType.ALL)
+    /*@OneToMany(cascade=CascadeType.ALL)
     //@JoinColumn(name = "list_id", referencedColumnName = "id")
-    private Map<Integer, ListEntry> entries;
+    private Map<Integer, Long> filmIds;*/
+
+    //todo TRY WITH ORDERED ONW MORE TIME
 
     private LocalDate creationDate;
 

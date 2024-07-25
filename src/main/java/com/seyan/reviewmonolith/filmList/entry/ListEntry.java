@@ -1,4 +1,4 @@
-package com.seyan.reviewmonolith.filmList;
+package com.seyan.reviewmonolith.filmList.entry;
 
 
 import jakarta.persistence.*;
@@ -6,7 +6,6 @@ import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @ToString
 @Data
@@ -21,9 +20,12 @@ public class ListEntry {
     @Id
     @Column(name = "list_id")
     private Long listId;
+
     @Id
     @Column(name = "film_id")
     private Long filmId;
+
+    private Long entryOrder;
 
     /*@EmbeddedId
     private ListEntryId id;*/

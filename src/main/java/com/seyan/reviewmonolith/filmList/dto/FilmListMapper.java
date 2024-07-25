@@ -3,8 +3,8 @@ package com.seyan.reviewmonolith.filmList.dto;
 
 import com.seyan.reviewmonolith.film.Film;
 import com.seyan.reviewmonolith.filmList.FilmList;
-import com.seyan.reviewmonolith.filmList.ListEntry;
-import com.seyan.reviewmonolith.filmList.ListEntryId;
+import com.seyan.reviewmonolith.filmList.entry.ListEntry;
+import com.seyan.reviewmonolith.filmList.entry.ListEntryId;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
@@ -65,7 +65,7 @@ public class FilmListMapper {
         List<ListEntryId> listEntryIds = mapFilmIdToListEntryId(listId, filmIds);
 
         return listEntryIds.stream()
-                .map(it -> new ListEntry(it.getListId(), it.getFilmId(), date))
+                .map(it -> new ListEntry(it.getListId(), it.getFilmId(), null, date))
                 .toList();
     }
 
@@ -94,7 +94,7 @@ public class FilmListMapper {
                 filmList.getPrivacy(),
                 filmList.getLikeCount(),
                 filmList.getCommentCount(),
-                new ArrayList<>()
+                Collections.emptyList()
                 //filmsResponse
         );
     }
