@@ -15,7 +15,8 @@ public class FilmListResponseDTO {
     String title;
     String description;
     Privacy privacy;
-    Long likeCount;
-    Long commentCount;
+    int likeCount;
+    int commentCount;
     List<FilmInFilmListResponseDTO> films;
+    Integer filmsCount;
 }

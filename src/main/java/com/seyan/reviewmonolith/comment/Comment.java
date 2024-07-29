@@ -1,28 +1,30 @@
 package com.seyan.reviewmonolith.comment;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-//@Entity
-//@Table(name = "comments")
+@Entity
+@Table(name = "comments")
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String content;
-    private Date creationDate;
-    private Long authorId;
-    //private Boolean isReviewComment;
-    //private Long likeCount;
-    //private List<Long> likedUsersIds;
+    private Long userId;
+    @Enumerated(EnumType.STRING)
+    private PostType postType;
+    private Long postId;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime commentDate;
+    private Boolean isEdited;
 }

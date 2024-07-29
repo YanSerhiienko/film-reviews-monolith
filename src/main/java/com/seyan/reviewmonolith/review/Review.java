@@ -28,7 +28,10 @@ public class Review {
     private Long filmId;
     private Long userId;
 
+    //private Long likeCount;
     private Set<Long> likedUsersIds;
+
+    //private Long commentCount;
     private Set<Long> commentIds;
 
     //todo this fields adds film to your diary
@@ -44,7 +47,6 @@ public class Review {
 
 
     //TODO boolean flags + user service get methods
-
 
     public Review() {
         this.creationDate = LocalDate.now();

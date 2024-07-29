@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}/update")
-    public ResponseEntity<CustomResponseWrapper<UserResponseDTO>> updateUser(@RequestBody @Valid UserUpdateDTO dto, @PathVariable("id") long id) {
+    public ResponseEntity<CustomResponseWrapper<UserResponseDTO>> updateUser(@RequestBody @Valid UserUpdateDTO dto, @PathVariable("id") Long id) {
         User user = userService.updateUser(dto, id);
         UserResponseDTO response = userMapper.mapUserToUserResponseDTO(user);
         CustomResponseWrapper<UserResponseDTO> wrapper = CustomResponseWrapper.<UserResponseDTO>builder()

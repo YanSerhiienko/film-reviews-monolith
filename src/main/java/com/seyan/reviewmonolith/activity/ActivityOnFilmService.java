@@ -26,7 +26,20 @@ public class ActivityOnFilmService {
     //todo replace review service with controller methods
     private final ReviewService reviewService;
 
+    public ActivityOnFilm getActivitiesForReviewLikes(List<Long> likedUsersIds) {
+        //get user (username, followers, following)
+        //get activity (rating, like)
+        //get review (if present - link to page with particular user reviews for this film)
+        return null;
+    }
+
+    //TODO get as likes
+    public ActivityOnFilm getActivitiesForListLikes(List<Long> likedUsersIds) {
+        return null;
+    }
+
     //todo add external review entity
+    @Transactional //todo interservice transaction (?)
     public ActivityOnFilm createOrUpdateActivity(ActivityAndReviewCreationDTO request) {
         ActivityOnFilm activity = activityMapper.mapActivityAndReviewCreationDTOToActivityOnFilm(request);
 
@@ -35,6 +48,7 @@ public class ActivityOnFilmService {
             Review review = reviewService.createReview(dto);
 
             activity.setIsInWatchlist(false);
+            activity.setHasReview(true);
         }
 
         return activityRepository.save(activity);
@@ -82,6 +96,7 @@ public class ActivityOnFilmService {
                 .isLiked(false)
                 .isInWatchlist(false)
                 .rating(0.0)
+                .hasReview(false)
                 .build());
     }
 
@@ -189,7 +204,7 @@ public class ActivityOnFilmService {
         }
     }
 
-    /*public ActivityOnFilm updateHasReview(Long userId, Long filmId) {
+    public ActivityOnFilm updateHasReview(Long userId, Long filmId) {
         ActivityOnFilm activity = getOrCreateActivityById(new ActivityOnFilmId(userId, filmId));
         if (activity.getHasReview()) {
             activity.setHasReview(false);
@@ -197,5 +212,5 @@ public class ActivityOnFilmService {
             activity.setHasReview(true);
         }
         return activityRepository.save(activity);
-    }*/
+    }
 }

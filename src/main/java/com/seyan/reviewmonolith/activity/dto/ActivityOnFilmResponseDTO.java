@@ -10,8 +10,8 @@ public record ActivityOnFilmResponseDTO(
         Boolean isLiked,
         Boolean isInWatchlist,
         Double rating,
-        LocalDate watchlistAddDate
-        //Boolean hasReview
+        LocalDate watchlistAddDate,
+        Boolean hasReview
 ) {
 
 }

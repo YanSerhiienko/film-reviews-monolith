@@ -19,7 +19,6 @@ import java.util.List;
 public class FilmListController {
     private final FilmListService filmListService;
     private final FilmListMapper filmListMapper;
-    private final ListEntryRepository entryRepository;
 
     @PostMapping("/lists/create")
     @ResponseStatus(HttpStatus.CREATED)
@@ -42,11 +41,12 @@ public class FilmListController {
 
     //todo /username/list/listname/edit/
 
-    @PatchMapping("/lists/{id}/update")
-    public ResponseEntity<CustomResponseWrapper<FilmListResponseDTO>> updateFilmList(@RequestBody @Valid FilmListUpdateDTO dto, @PathVariable("id") Long id) {
-        FilmList list = filmListService.updateFilmList(dto, id);
-        //List<Long> filmIds = list.getFilmIds().stream().map(it -> it.getFilmId()).toList();
-        List<Long> filmIds = entryRepository.findByListId(list.getId()).stream().sorted(Comparator.comparing(ListEntry::getEntryOrder)).map(ListEntry::getFilmId).toList();
+    @PatchMapping("/lists/{listId}/update")
+    public ResponseEntity<CustomResponseWrapper<FilmListResponseDTO>> updateFilmList(@RequestBody @Valid FilmListUpdateDTO dto, @PathVariable("listId") Long listId) {
+
+        FilmList list = filmListService.updateFilmList(dto, listId);
+        List<Long> filmIds = list.getFilmIds().stream().sorted(Comparator.comparing(ListEntry::getEntryOrder)).map(ListEntry::getFilmId).toList();
+
         List<FilmInFilmListResponseDTO> films = filmListService.getFilmsFromList(filmIds);
 
         FilmListResponseDTO response = filmListMapper.mapFilmListToFilmListResponseDTO(list);
@@ -61,15 +61,23 @@ public class FilmListController {
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
     }
 
+    @DeleteMapping("/lists/{listId}/delete")
+    public ResponseEntity<CustomResponseWrapper<FilmListResponseDTO>> deleteFilmList(@PathVariable("listId") Long listId) {
+        filmListService.deleteFilmList(listId);
+        CustomResponseWrapper<FilmListResponseDTO> wrapper = CustomResponseWrapper.<FilmListResponseDTO>builder()
+                .status(HttpStatus.OK.value())
+                .message("List has been deleted")
+                .data(null)
+                .build();
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }
+
     @GetMapping("/lists/{listId}")
     public ResponseEntity<CustomResponseWrapper<FilmListResponseDTO>> getListById(@PathVariable("listId") Long listId) {
 
-        FilmList list = filmListService.getListById(listId);
-        System.out.println("list = " + list);
-        /*List<ListEntry> entries = list.getFilmIds().stream().toList();
-        List<Long> filmIds = filmListMapper.mapListEntriesToFilmIds(entries);*/
-        List<Long> filmIds = entryRepository.findByListId(list.getId()).stream().sorted(Comparator.comparing(ListEntry::getEntryOrder)).map(ListEntry::getFilmId).toList();
-        System.out.println("filmIds = " + filmIds);
+        FilmList list = filmListService.getFilmListById(listId);
+        List<Long> filmIds = list.getFilmIds().stream().sorted(Comparator.comparing(ListEntry::getEntryOrder)).map(ListEntry::getFilmId).toList();
+
         List<FilmInFilmListResponseDTO> films = filmListService.getFilmsFromList(filmIds);
 
         FilmListResponseDTO response = filmListMapper.mapFilmListToFilmListResponseDTO(list);
@@ -84,16 +92,35 @@ public class FilmListController {
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
     }
 
-    /*@DeleteMapping("/lists/{id}/delete")
-    public ResponseEntity<CustomResponseWrapper<UserResponseDTO>> deleteFilmList(@PathVariable("id") Long userId) {
-        userService.deleteUser(userId);
-        CustomResponseWrapper<UserResponseDTO> wrapper = CustomResponseWrapper.<UserResponseDTO>builder()
+    @GetMapping("/lists")
+    public ResponseEntity<CustomResponseWrapper<List<FilmListResponseDTO>>> getAll() {
+        List<FilmList> allLists = filmListService.getAllFilmLists();
+
+        List<FilmListResponseDTO> response = filmListMapper.mapFilmListToFilmListResponseDTO(allLists);
+
+        CustomResponseWrapper<List<FilmListResponseDTO>> wrapper = CustomResponseWrapper.<List<FilmListResponseDTO>>builder()
                 .status(HttpStatus.OK.value())
-                .message("User has been deleted")
-                .data(null)
+                .message("All film list")
+                .data(response)
                 .build();
+
         return new ResponseEntity<>(wrapper, HttpStatus.OK);
-    }*/
+    }
+
+    @GetMapping("/{userId}/lists")
+    public ResponseEntity<CustomResponseWrapper<List<FilmListResponseDTO>>> getAllByUserId(@PathVariable("userId") Long userId) {
+        List<FilmList> allLists = filmListService.getAllFilmListsByUserId(userId);
+
+        List<FilmListResponseDTO> response = filmListMapper.mapFilmListToFilmListResponseDTO(allLists);
+
+        CustomResponseWrapper<List<FilmListResponseDTO>> wrapper = CustomResponseWrapper.<List<FilmListResponseDTO>>builder()
+                .status(HttpStatus.OK.value())
+                .message("All film list")
+                .data(response)
+                .build();
+
+        return new ResponseEntity<>(wrapper, HttpStatus.OK);
+    }
 
     /*@GetMapping("/{userId}/list/{listTitle}")
     public ResponseEntity<CustomResponseWrapper<UserResponseDTO>> filmListDetails(
@@ -112,30 +139,4 @@ public class FilmListController {
 
     //todo username/likes/lists/
     //todo /username/lists/
-
-    /*@GetMapping("/lists")
-    public ResponseEntity<CustomResponseWrapper<List<UserResponseDTO>>> getAll() {
-        List<User> allUsers = userService.getAllUsers();
-        List<UserResponseDTO> response = userMapper.mapUserToUserResponseDTO(allUsers);
-        CustomResponseWrapper<List<UserResponseDTO>> wrapper = CustomResponseWrapper.<List<UserResponseDTO>>builder()
-                .status(HttpStatus.OK.value())
-                .message("List of all users")
-                .data(response)
-                .build();
-        return new ResponseEntity<>(wrapper, HttpStatus.OK);
-    }*/
-
-    /*@GetMapping("/{userId}/lists")
-    public ResponseEntity<CustomResponseWrapper<List<UserResponseDTO>>> getAllByUserId() {
-        List<User> allUsers = userService.getAllUsers();
-        List<UserResponseDTO> response = userMapper.mapUserToUserResponseDTO(allUsers);
-        CustomResponseWrapper<List<UserResponseDTO>> wrapper = CustomResponseWrapper.<List<UserResponseDTO>>builder()
-                .status(HttpStatus.OK.value())
-                .message("List of all users")
-                .data(response)
-                .build();
-        return new ResponseEntity<>(wrapper, HttpStatus.OK);
-    }*/
-
-
 }

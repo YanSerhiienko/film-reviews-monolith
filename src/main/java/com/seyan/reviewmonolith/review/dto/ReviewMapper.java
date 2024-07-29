@@ -52,8 +52,8 @@ public class ReviewMapper {
                 review.getCreationDate(),
                 review.getFilmId(),
                 review.getUserId(),
-                review.getLikedUsersIds(),
-                review.getCommentIds()
+                review.getLikedUsersIds().size(),
+                review.getCommentIds().size()
         );
     }
 

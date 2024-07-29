@@ -33,8 +33,8 @@ public class ActivityOnFilmMapper {
                 activity.getIsLiked(),
                 activity.getIsInWatchlist(),
                 activity.getRating(),
-                activity.getWatchlistAddDate()
-                //hasReview
+                activity.getWatchlistAddDate(),
+                activity.getHasReview()
         );
     }
 

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.beans.PropertyDescriptor;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,26 +23,6 @@ public class FilmListMapper {
         BeanUtils.copyProperties(dto, filmList, getNullFieldNames(dto));
         return filmList;
     }
-
-    /*public List<Long> mapListEntriesToFilmIds(List<ListEntry> filmEntries) {
-        if (filmEntries == null) {
-            return null;
-        }
-
-        return filmEntries.stream()
-                .map(ListEntry::getFilmId)
-                .toList();
-    }
-
-    public List<ListEntry> mapFilmIdsToListEntries(List<Long> filmIds, LocalDate date) {
-        if (filmIds == null) {
-            return null;
-        }
-
-        return filmIds.stream()
-                .map(it -> new ListEntry(it, date))
-                .toList();
-    }*/
 
     public Map<Integer, ListEntry> mapListEntriesToOrderedMap(List<ListEntry> entries) {
         return entries.stream().collect(Collectors.toMap(entries::indexOf, it -> it));
@@ -57,7 +38,7 @@ public class FilmListMapper {
                 .toList();
     }
 
-    public List<ListEntry> mapFilmIdsToListEntries(Long listId, List<Long> filmIds, LocalDate date) {
+    public List<ListEntry> mapFilmIdsToListEntries(Long listId, List<Long> filmIds, LocalDateTime date) {
         if (filmIds == null) {
             return null;
         }
@@ -92,9 +73,10 @@ public class FilmListMapper {
                 filmList.getTitle(),
                 filmList.getDescription(),
                 filmList.getPrivacy(),
-                filmList.getLikeCount(),
-                filmList.getCommentCount(),
-                Collections.emptyList()
+                filmList.getLikedUsersIds().size(),
+                filmList.getCommentIds().size(),
+                Collections.emptyList(),
+                filmList.getFilmIds().size()
                 //filmsResponse
         );
     }

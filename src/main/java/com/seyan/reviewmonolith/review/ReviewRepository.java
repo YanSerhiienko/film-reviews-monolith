@@ -6,6 +6,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 @Repository
@@ -28,4 +29,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     List<Review> findByUserIdAndContentNotNull(Long userId);
 
     List<Review> findByUserIdAndWatchedOnDateNotNull(Long userId);
+
+    List<Review> findByUserIdAndFilmIdAndContentNotNull(Long userId, Long filmId);
+
+    int countByUserIdAndFilmIdAndContentNotNull(Long userId, Long filmId);
 }

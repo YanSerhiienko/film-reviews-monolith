@@ -14,10 +14,8 @@ public record ReviewResponseDTO(
         LocalDate creationDate,
         Long filmId,
         Long authorId,
-        //Long reviewLikeCount,
-        Set<Long> likedUsersIds,
-        //Long commentCount,
-        Set<Long> commentIds
+        int reviewLikeCount,
+        int commentCount
         //Boolean watchedThisFilmBefore
 ) {
 

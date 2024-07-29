@@ -8,6 +8,7 @@ import lombok.ToString;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @ToString
@@ -27,35 +28,24 @@ public class FilmList {
     private String description;
     @Enumerated(EnumType.STRING)
     private Privacy privacy;
-    private Long likeCount;
-    private Long commentCount;
+
+   // private Long likeCount;
+    private Set<Long> likedUsersIds;
+
+    //private Long commentCount;
+    private Set<Long> commentIds;
 
     @OneToMany(cascade=CascadeType.ALL)
     @JoinColumn(name = "list_id", referencedColumnName = "id")
     private List<ListEntry> filmIds = new ArrayList<>();
 
-    //private HashSet<Long> commentIds;
-    //private Map<Integer, ListEntry> filmIds;
+    private LocalDateTime creationDate;
 
-    //@Builder.Default
-    //@OrderColumn()
-/*    @JoinColumn(name = "list_id", referencedColumnName = "id")
-    @OneToMany(cascade=CascadeType.ALL)
-    private List<ListEntry> filmIds = new ArrayList<>();*/
-
-    /*@OneToMany(cascade=CascadeType.ALL)
-    //@JoinColumn(name = "list_id", referencedColumnName = "id")
-    private Map<Integer, Long> filmIds;*/
-
-    //todo TRY WITH ORDERED ONW MORE TIME
-
-    private LocalDate creationDate;
-
-    private LocalDate lastUpdateDate;
+    private LocalDateTime lastUpdateDate;
     //todo you watched method
 
     public FilmList() {
-        this.likeCount = 0L;
-        this.commentCount = 0L;
+        this.likedUsersIds = new HashSet<>();
+        this.commentIds = new HashSet<>();
     }
 }

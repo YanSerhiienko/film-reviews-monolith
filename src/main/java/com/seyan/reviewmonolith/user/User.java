@@ -34,21 +34,11 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    private Role role;
+    private List<Role> roles;
 
-    //List<Long> watchedFilms;
+    List<Long> followingUsers;
 
-    //Set<Long> watchlistFilms;
-
-    //List<Long> likedFilms;
-
-    //List<Long> likedReviews;
-
-    //List<Long> likedLists;
-
-    //List<Long> followingUsers;
-
-    //List<Long> followersUsers;
+    List<Long> followersUsers;
 
     //List<Long> blockedUsers;
 }
